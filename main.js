@@ -1358,8 +1358,3 @@ function incrementTrackingStat(playerIndex, statKey) {
 
 initializeTrackingData();
 updateMainClockAlert();
-
-// Mantém o relógio principal a arrancar visualmente em 20:00 e em contagem decrescente.
-if (clockMain && (!clockMain.innerHTML || clockMain.innerHTML === "00:00")) {
-    clockMain.innerHTML = "20:00";
-}
