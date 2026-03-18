@@ -21,23 +21,6 @@ var secondsP = 0;
 var minutesP = 0;
 var IntervalM;
 var IntervalP;
-var trackingRows = document.getElementById("trackingRows");
-var trackingColumns = [
-    { key: "remates_1p_r", className: "blue" },
-    { key: "remates_1p_re", className: "blue" },
-    { key: "remates_2p_r", className: "blue" },
-    { key: "remates_2p_re", className: "blue" },
-    { key: "passes_z1", className: "red" },
-    { key: "passes_z2", className: "red" },
-    { key: "passes_z3", className: "yellow" },
-    { key: "passes_z4", className: "green" },
-    { key: "perdas_z1", className: "red" },
-    { key: "perdas_z2", className: "red" },
-    { key: "perdas_z3", className: "yellow" },
-    { key: "perdas_z4", className: "green" }
-];
-var trackingData = [];
-var currentTrackingPlayer = 0;
 // Team
 var txtHome = document.getElementById("home")
 var txtAway = document.getElementById("away")
@@ -92,6 +75,24 @@ var btnM3NegA = document.getElementById("m3-neg-a");
 
 //Analysis
 var tblAnl = document.getElementById("tbl-anl");
+
+var trackingRows = document.getElementById("trackingRows");
+var trackingColumns = [
+    { key: "remates_1p_r", className: "blue" },
+    { key: "remates_1p_re", className: "blue" },
+    { key: "remates_2p_r", className: "blue" },
+    { key: "remates_2p_re", className: "blue" },
+    { key: "passes_z1", className: "red" },
+    { key: "passes_z2", className: "red" },
+    { key: "passes_z3", className: "yellow" },
+    { key: "passes_z4", className: "green" },
+    { key: "perdas_z1", className: "red" },
+    { key: "perdas_z2", className: "red" },
+    { key: "perdas_z3", className: "yellow" },
+    { key: "perdas_z4", className: "green" }
+];
+var trackingData = [];
+
 
 // Helper
 const arrSum = arr => arr.reduce((a,b) => a + b, 0);
@@ -639,7 +640,7 @@ function updateLiveVis() {
     for (i=1; i<=struct_general.nplay + struct_general.nsub; i++) {
         // GET CLOCK COLOR
         txtRot = document.getElementById("rot" + i);
-        txtRot.innerHTML = struct_team.players[i-1].active==1 ? tbl_period.Rotations[perno][i-1] || 1 : "";
+        txtRot.innerHTML = tbl_period.Rotations[perno][i-1];
 
         txtClock = document.getElementById("time" + i);
         clockDat = struct_team.players[i-1].tplay;
@@ -664,7 +665,7 @@ function updateLiveVis() {
         txtWR.style.color = getVisColorWR(wrRatio, colGBR);
 
         txtTP = document.getElementById("tp" + i);
-        txtTP.innerHTML = struct_team.players[i-1].pno;
+        txtTP.innerHTML = setClock(struct_team.players[i-1].tplay);
         txtTR = document.getElementById("tr" + i);
         txtTR.innerHTML = setClock(struct_team.players[i-1].trest);
     }
@@ -696,7 +697,6 @@ function setSelected(i) {
     if (struct_team["players"][i-1]["selected"]==0) {
         struct_team["players"][i-1]["selected"] = 1;
         el.classList.add('selected');
-        setCurrentTrackingPlayer(i-1);
     } else {
         struct_team["players"][i-1]["selected"] = 0;
         el.classList.remove('selected');
@@ -765,7 +765,6 @@ function switchPlayers(selArray){
         el1.classList.add('active');
         el2.classList.remove('active');
         //checkSub();
-        setCurrentTrackingPlayer(onID);
         updateAnlUITable();
     }
     struct_team.players[onID].selected = 0;
@@ -987,8 +986,6 @@ function updateTeamInfo(mInfo, pInfo) {
 
     // Update Player UI Labels
     updateLiveButtons();
-    currentTrackingPlayer = 0;
-    renderTrackingBoard();
     initializeTrackingData();
 }
 //#endregion
@@ -1044,8 +1041,6 @@ btnLoadMatch.onchange = function() {
             btnM2ValA.innerHTML = struct_general.metric_val[1][1];
             btnM3ValH.innerHTML = struct_general.metric_val[2][0];
             btnM3ValA.innerHTML = struct_general.metric_val[2][1];
-            currentTrackingPlayer = 0;
-            renderTrackingBoard();
 
             // UPDATE ENABLES
             if (struct_time["pausetgl"]==1) {
@@ -1074,7 +1069,6 @@ btnLoadMatch.onchange = function() {
 };
 
 function updateLiveButtons() {
-    var firstActive = 0;
     // Update Player UI Labels
     for (i=0; i<struct_team.players.length; i++) {
         elName = document.getElementById('name'+(i+1));
@@ -1089,11 +1083,7 @@ function updateLiveButtons() {
         }
         if (struct_team.players[i-1].active==1) {
             el.classList.add('active');
-            firstActive = i-1;
         }
-    }
-    if (currentTrackingPlayer < 0 || currentTrackingPlayer >= struct_team.players.length) {
-        currentTrackingPlayer = firstActive;
     }
 }
 //#endregion
@@ -1268,7 +1258,7 @@ window.onload = function() {
     document.getElementById("pnl-metrics").style.display = "none";
     document.getElementById("pnl-analysis").style.display = "none";
     document.getElementById("pnl-stop").style.display = "none";
-    renderTrackingBoard();
+    initializeTrackingData();
 }
 //#endregion
 
@@ -1350,12 +1340,6 @@ function getAllIndexes(arr, val) {
 }
 
 
-function setCurrentTrackingPlayer(playerIndex) {
-    if (playerIndex < 0 || playerIndex >= struct_team.players.length) return;
-    currentTrackingPlayer = playerIndex;
-    renderTrackingBoard();
-}
-
 function initializeTrackingData() {
     trackingData = [];
     for (var i = 0; i < struct_team.players.length; i++) {
@@ -1370,20 +1354,19 @@ function initializeTrackingData() {
 }
 
 function renderTrackingBoard() {
-    if (!trackingRows || !trackingData.length) return;
+    if (!trackingRows) return;
     trackingRows.innerHTML = "";
-    var i = currentTrackingPlayer;
-    if (i < 0 || i >= trackingData.length) i = 0;
-    var row = document.createElement("div");
-    row.className = "tracking-row single-row";
-    var displayName = (struct_team.players[i] && struct_team.players[i].nlast) ? struct_team.players[i].nlast.toLowerCase() : trackingData[i].name;
-    var html = '<div class="tracking-name-cell">' + displayName + '</div>';
-    for (var j = 0; j < trackingColumns.length; j++) {
-        var col = trackingColumns[j];
-        html += '<button class="tracking-stat ' + col.className + '" onclick="incrementTrackingStat(' + i + ', \'" + col.key + "\')">' + trackingData[i][col.key] + '</button>';
+    for (var i = 0; i < trackingData.length; i++) {
+        var row = document.createElement("div");
+        row.className = "tracking-row";
+        var html = '<div class="tracking-name-cell">' + trackingData[i].name + '</div>';
+        for (var j = 0; j < trackingColumns.length; j++) {
+            var col = trackingColumns[j];
+            html += '<button class="tracking-stat ' + col.className + '" onclick="incrementTrackingStat(' + i + ', \'" + col.key + "\')">' + trackingData[i][col.key] + '</button>';
+        }
+        row.innerHTML = html;
+        trackingRows.appendChild(row);
     }
-    row.innerHTML = html;
-    trackingRows.appendChild(row);
 }
 
 function incrementTrackingStat(playerIndex, statKey) {

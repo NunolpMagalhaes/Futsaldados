@@ -223,139 +223,81 @@ body{min-height:100vh}
 @media (max-width: 1200px){#grid-container{grid-template-columns:1fr;grid-template-areas:"header" "right" "field" "tracking";}#right-column{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:none;}}
 
 
-/* === refined player card layout === */
-#pnl-field{
+/* Ajuste pedido: ver 16 jogadoras logo ao abrir + cartões um pouco mais pequenos */
+#grid-container{
+  max-width:1360px;
   gap:8px;
 }
+#pnl-field{
+  gap:8px;
+  padding:8px;
+}
 .player{
-  min-height:262px;
-  padding:18px 14px 14px;
+  min-height:152px;
+  padding:8px 8px 10px;
   justify-content:flex-start;
-  align-items:center;
-  background:linear-gradient(180deg,#3e4854 0%, #313944 100%);
-  border-radius:18px;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 8px 18px rgba(0,0,0,.24);
+  background:linear-gradient(180deg,#4c5764 0%, #394450 100%);
 }
 .player.active{
-  background:linear-gradient(180deg,#333d48 0%, #252d36 100%);
-  box-shadow:inset 0 0 0 3px var(--yellow),0 0 18px rgba(244,196,0,.18);
-}
-.player.selected{
-  box-shadow:inset 0 0 0 3px #fff,inset 0 0 0 6px var(--yellow),0 0 18px rgba(255,255,255,.12);
+  background:linear-gradient(180deg,#37414c 0%, #252d36 100%);
 }
 .jersey-no{
   position:absolute;
-  top:16px;
-  left:18px;
+  top:8px;
+  left:10px;
   margin:0;
-  font-size:28px;
+  font-size:18px;
   font-weight:900;
-  color:var(--cyan);
-  line-height:1;
+  text-align:left;
 }
 .jersey-name{
   width:100%;
-  margin:10px 0 18px;
-  font-size:20px;
+  margin:8px 0 10px;
+  padding:0 22px;
+  font-size:16px;
   font-weight:800;
-  color:#f5f7fb;
   text-align:center;
-  line-height:1.08;
+  line-height:1.05;
 }
 .jersey-time{
-  margin:34px 0 18px;
-  font-size:74px;
-  font-weight:900;
-  text-align:center;
-  line-height:1;
-}
-.jersey-total,
-.jersey-tr{
-  position:absolute;
-  bottom:12px;
-  min-width:96px;
-  height:42px;
-  display:flex !important;
-  align-items:center;
-  justify-content:center;
-  padding:0 14px;
-  border-radius:16px;
-  font-size:24px;
-  font-weight:900;
-  line-height:1;
-  background:rgba(0,0,0,.12);
+  margin:8px 0 8px;
+  font-size:30px;
 }
 .jersey-total{
-  left:10px;
-  color:#44f39a;
-  border:3px solid #44f39a;
-  border-right-width:1px;
-  border-top-right-radius:28px;
-  border-bottom-right-radius:28px;
+  font-size:10px;
 }
-.jersey-tr{
-  right:10px;
-  color:#ff4e5f;
-  border:3px solid #ff4e5f;
-  border-left-width:1px;
-  border-top-left-radius:28px;
-  border-bottom-left-radius:28px;
+#right-column{
+  gap:8px;
 }
-.jersey-tp{
-  position:absolute;
-  bottom:18px;
-  left:50%;
-  transform:translateX(-50%);
-  display:block !important;
-  margin:0;
-  font-size:28px;
-  font-weight:900;
-  color:#ff6b5e;
-  line-height:1;
+#pnl-time,#pnl-match{
+  padding:10px;
 }
-.jersey-rot{
-  position:absolute;
-  top:14px;
-  right:12px;
-  min-width:72px;
-  height:52px;
-  display:none !important;
-  align-items:center;
-  justify-content:center;
-  margin:0;
-  padding:0 12px;
-  border-radius:16px;
-  background:linear-gradient(180deg,#f3c500 0%, #f2a20a 100%);
-  color:#111827;
-  font-size:28px;
-  font-weight:900;
-  line-height:1;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 6px 12px rgba(0,0,0,.18);
+.top-time-row{
+  grid-template-columns:1fr 82px;
 }
-.player.active .jersey-rot{display:flex !important;}
-.jersey-wr{display:none !important;}
-
-/* Right column slightly bigger */
-#grid-container{
-  grid-template-columns:minmax(0,1fr) 320px;
+.clock{font-size:32px;}
+.period{font-size:32px;}
+.score-click{font-size:28px; min-height:46px;}
+.button-1.kickoff{min-height:44px; font-size:13px;}
+.button-1.pause,.button-1.break{min-height:36px; font-size:11px;}
+#pnl-tracking{padding:8px;}
+.tracking-header-top,.tracking-header-bottom,.tracking-row{
+  grid-template-columns:120px repeat(12, minmax(52px, 1fr));
+  gap:4px;
+  min-width:860px;
 }
-.top-time-row{grid-template-columns:1fr 92px;gap:8px;margin-bottom:10px;}
-.time-block{padding:8px;border-radius:14px;}
-.txt-lbl{font-size:12px;margin-bottom:6px;}
-.clock{font-size:38px;}
-.period{font-size:44px;}
-.score-click{font-size:44px;min-height:72px;}
-#pnl-match{min-height:174px;}
-.team-name{font-size:16px;padding:8px 6px;}
-.button-1.kickoff{width:92%;min-height:52px;font-size:15px;}
-.button-1.pause,.button-1.break{width:84%;min-height:42px;font-size:13px;}
-
-/* Only one tracking player visible */
-#pnl-tracking{padding:12px;}
-.tracking-header-top,.tracking-header-bottom,.tracking-row{grid-template-columns:160px repeat(12, minmax(62px,1fr));}
-.tracking-row.single-row{margin-bottom:0;}
-
+.tracking-group{font-size:13px; padding:8px 5px;}
+.tracking-name-head{font-size:12px; padding:7px;}
+.tracking-head{font-size:11px; padding:8px 3px;}
+.tracking-name-cell{font-size:13px; padding:6px;}
+.tracking-stat{min-height:44px; font-size:20px;}
 @media (max-width: 1200px){
-  .player{min-height:220px;}
-  .jersey-time{font-size:58px;}
+  #grid-container{
+    grid-template-columns:1fr;
+    grid-template-areas:
+      "header"
+      "right"
+      "field"
+      "tracking";
+  }
 }
