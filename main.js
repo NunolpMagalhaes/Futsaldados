@@ -220,6 +220,8 @@ clockKickOff.onclick = function() {
             struct_team.players[p].trest = 0;
         }
         updateLiveVis();
+        displayClock(clockMain, minutesM, secondsM, 0, struct_time.period-1);
+        displayClock(clockPlay, minutesP, secondsP, 1, struct_time.period-1);
 
         clearInterval(IntervalM);
         clearInterval(IntervalP);
@@ -442,15 +444,20 @@ function displayClock(clockTxt, minutes, seconds, mode, per) {
     if (per < struct_general.nper) {
         // mode: 0 - Main Clock, 1 - Play Clock
         if (mode==0) {
-            var minutesTxt = parseInt(minutes)
-            var secondsTxt = parseInt(seconds)
-            if(minutes<=9){
-                minutesTxt = "0" + parseInt(minutes)
+            var secondsTotal = 60*struct_general.per_time[per] - (parseInt(seconds) + 60*parseInt(minutes));
+            if (secondsTotal >= 0) {
+                clockTxt.innerHTML = setClock(secondsTotal);
+            } else {
+                var minutesTxt = Math.ceil(secondsTotal/60);
+                var secondsTxt = Math.abs(secondsTotal - 60*minutesTxt);
+                if (minutesTxt > -10) {
+                    minutesTxt = "-0" + Math.abs(minutesTxt);
+                }
+                if (secondsTxt < 10) {
+                    secondsTxt = "0" + secondsTxt;
+                }
+                clockTxt.innerHTML = minutesTxt + ":" + secondsTxt;
             }
-            if(seconds<=9){
-                secondsTxt = "0" + parseInt(seconds)
-            }
-            clockTxt.innerHTML = minutesTxt + ":" + secondsTxt;
         } else {
             var secondsTotal = 60*struct_general.per_time[per] - (parseInt(seconds) + 60*parseInt(minutes))
             if (secondsTotal>=0) {
@@ -1002,10 +1009,14 @@ btnLoadMatch.onchange = function() {
             updateAnlUITable();
             updateLiveVis();
             updateLiveButtons();
-            renderTrackingBoard();
+            syncInitialClockDisplays();
+updateClockAlert();
+renderTrackingBoard();
             clockPer.innerHTML = struct_time["period"];
             clockMain.innerHTML = struct_time["clock_main"];
             clockPlay.innerHTML = struct_time["clock_play"];
+            syncInitialClockDisplays();
+            updateClockAlert();
             txtHScore.innerHTML = struct_match["score"][0];
             txtAScore.innerHTML = struct_match["score"][1];
             // Update Team UI Labels
@@ -1130,6 +1141,14 @@ function incrementTrackingStat(playerIndex, statKey) {
     }
     trackingData[playerIndex][statKey]++;
     renderTrackingBoard();
+}
+
+
+function syncInitialClockDisplays() {
+    var perIndex = (parseInt(struct_time.period, 10) || 1) - 1;
+    if (perIndex < 0) { perIndex = 0; }
+    displayClock(clockMain, minutesM, secondsM, 0, perIndex);
+    displayClock(clockPlay, minutesP, secondsP, 1, perIndex);
 }
 
 function updateClockAlert() {
