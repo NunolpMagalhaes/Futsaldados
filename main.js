@@ -44,22 +44,6 @@ var btnP15 = document.getElementById("btn15");
 var btnP16 = document.getElementById("btn16");
 var btnGH = document.getElementById("goal-h");
 var btnGA = document.getElementById("goal-a");
-var trackingRows = document.getElementById("trackingRows");
-var trackingColumns = [
-    { key: "remates_1p_r", className: "blue" },
-    { key: "remates_1p_re", className: "blue" },
-    { key: "remates_2p_r", className: "blue" },
-    { key: "remates_2p_re", className: "blue" },
-    { key: "passes_z1", className: "red" },
-    { key: "passes_z2", className: "red" },
-    { key: "passes_z3", className: "yellow" },
-    { key: "passes_z4", className: "green" },
-    { key: "perdas_z1", className: "red" },
-    { key: "perdas_z2", className: "red" },
-    { key: "perdas_z3", className: "yellow" },
-    { key: "perdas_z4", className: "green" }
-];
-var trackingData = [];
 //Metrics
 var btnM1Lbl = document.getElementById("m1-lbl");
 var btnM2Lbl = document.getElementById("m2-lbl");
@@ -150,7 +134,6 @@ for(var i = 0; i<(struct_general["nplay"] + struct_general["nsub"]); i++) {
     }
     struct_team["players"].push(pinfo)
 }
-initializeTrackingData();
 //#endregion
 //#region Initialize Tables
 var tbl_match = {
@@ -220,8 +203,6 @@ clockKickOff.onclick = function() {
             struct_team.players[p].trest = 0;
         }
         updateLiveVis();
-        displayClock(clockMain, minutesM, secondsM, 0, struct_time.period-1);
-        displayClock(clockPlay, minutesP, secondsP, 1, struct_time.period-1);
 
         clearInterval(IntervalM);
         clearInterval(IntervalP);
@@ -306,8 +287,7 @@ clockBreak.onclick = function() {
 
     minutesM = "0";
     secondsM = "0";
-    displayClock(clockMain, minutesM, secondsM, 0, struct_time.period)
-    updateClockAlert();
+    displayClock(clockMain, minutesM, secondsM, 0, struct_time.period-1)
 
     minutesP = "0";
     secondsP = "0";
@@ -410,8 +390,8 @@ function startMain() {
         secondsM = 0;
     }
 
-    displayClock(clockMain, minutesM, secondsM, 0, struct_time.period-1);
-    updateClockAlert();
+    displayClock(clockMain, minutesM, secondsM, 0, struct_time.period-1)
+    updateMainClockAlert();
 }
 function startPlay() {
     secondsP++;
@@ -478,6 +458,17 @@ function displayClock(clockTxt, minutes, seconds, mode, per) {
         clockTxt.innerHTML = "--:--"
     }
 }
+function updateMainClockAlert() {
+    if (!clockMain) return;
+    var elapsed = parseInt(minutesM)*60 + parseInt(secondsM);
+    clockMain.classList.remove("alert-3min", "alert-4min");
+    if (elapsed >= 240) {
+        clockMain.classList.add("alert-4min");
+    } else if (elapsed >= 180) {
+        clockMain.classList.add("alert-3min");
+    }
+}
+
 function parseClock(clockTxt, mode) {
     // 0: Main Clock, 1: Play Clock
     if (mode==0) {
@@ -977,6 +968,7 @@ function updateTeamInfo(mInfo, pInfo) {
 
     // Update Player UI Labels
     updateLiveButtons();
+    initializeTrackingData();
 }
 //#endregion
 
@@ -1009,14 +1001,10 @@ btnLoadMatch.onchange = function() {
             updateAnlUITable();
             updateLiveVis();
             updateLiveButtons();
-            syncInitialClockDisplays();
-updateClockAlert();
-renderTrackingBoard();
+            initializeTrackingData();
             clockPer.innerHTML = struct_time["period"];
             clockMain.innerHTML = struct_time["clock_main"];
             clockPlay.innerHTML = struct_time["clock_play"];
-            syncInitialClockDisplays();
-            updateClockAlert();
             txtHScore.innerHTML = struct_match["score"][0];
             txtAScore.innerHTML = struct_match["score"][1];
             // Update Team UI Labels
@@ -1035,7 +1023,6 @@ renderTrackingBoard();
             btnM2ValA.innerHTML = struct_general.metric_val[1][1];
             btnM3ValH.innerHTML = struct_general.metric_val[2][0];
             btnM3ValA.innerHTML = struct_general.metric_val[2][1];
-            updateClockAlert();
 
             // UPDATE ENABLES
             if (struct_time["pausetgl"]==1) {
@@ -1080,90 +1067,8 @@ function updateLiveButtons() {
             el.classList.add('active');
         }
     }
-    initializeTrackingData();
-    renderTrackingBoard();
 }
 //#endregion
-
-
-
-function initializeTrackingData() {
-    trackingData = [];
-    for (var i = 0; i < struct_team.players.length; i++) {
-        trackingData.push({
-            name: (struct_team.players[i].nlast || ("Player " + (i + 1))).toLowerCase(),
-            remates_1p_r: 0,
-            remates_1p_re: 0,
-            remates_2p_r: 0,
-            remates_2p_re: 0,
-            passes_z1: 0,
-            passes_z2: 0,
-            passes_z3: 0,
-            passes_z4: 0,
-            perdas_z1: 0,
-            perdas_z2: 0,
-            perdas_z3: 0,
-            perdas_z4: 0
-        });
-    }
-}
-
-function renderTrackingBoard() {
-    if (!trackingRows) {
-        return;
-    }
-    trackingRows.innerHTML = "";
-
-    for (var i = 0; i < trackingData.length; i++) {
-        var player = trackingData[i];
-        var row = '<div class="tracking-row"><div class="tracking-name-cell">' + player.name + '</div>';
-
-        for (var j = 0; j < trackingColumns.length; j++) {
-            var col = trackingColumns[j];
-            row += '<button class="tracking-stat ' + col.className + '" data-player="' + i + '" data-key="' + col.key + '">' + player[col.key] + '</button>';
-        }
-
-        row += '</div>';
-        trackingRows.innerHTML += row;
-    }
-
-    var trackingButtons = trackingRows.querySelectorAll('.tracking-stat');
-    trackingButtons.forEach(function(button) {
-        button.addEventListener('click', function() {
-            incrementTrackingStat(parseInt(button.dataset.player), button.dataset.key);
-        });
-    });
-}
-
-function incrementTrackingStat(playerIndex, statKey) {
-    if (!trackingData[playerIndex]) {
-        return;
-    }
-    trackingData[playerIndex][statKey]++;
-    renderTrackingBoard();
-}
-
-
-function syncInitialClockDisplays() {
-    var perIndex = (parseInt(struct_time.period, 10) || 1) - 1;
-    if (perIndex < 0) { perIndex = 0; }
-    displayClock(clockMain, minutesM, secondsM, 0, perIndex);
-    displayClock(clockPlay, minutesP, secondsP, 1, perIndex);
-}
-
-function updateClockAlert() {
-    if (!clockMain) {
-        return;
-    }
-    clockMain.classList.remove('alert-3min', 'alert-4min');
-
-    var totalSeconds = (parseInt(minutesM) || 0) * 60 + (parseInt(secondsM) || 0);
-    if (totalSeconds >= 240) {
-        clockMain.classList.add('alert-4min');
-    } else if (totalSeconds >= 180) {
-        clockMain.classList.add('alert-3min');
-    }
-}
 
 //#region Save Match
 btnSave.onclick = function() {
@@ -1415,6 +1320,41 @@ function getAllIndexes(arr, val) {
     return indexes;
 }
 
+
+function initializeTrackingData() {
+    trackingData = [];
+    for (var i = 0; i < struct_team.players.length; i++) {
+        trackingData.push({
+            name: (struct_team.players[i].nlast || lastNames[i] || ("P" + (i+1))).toLowerCase(),
+            remates_1p_r: 0, remates_1p_re: 0, remates_2p_r: 0, remates_2p_re: 0,
+            passes_z1: 0, passes_z2: 0, passes_z3: 0, passes_z4: 0,
+            perdas_z1: 0, perdas_z2: 0, perdas_z3: 0, perdas_z4: 0
+        });
+    }
+    renderTrackingBoard();
+}
+
+function renderTrackingBoard() {
+    if (!trackingRows) return;
+    trackingRows.innerHTML = "";
+    for (var i = 0; i < trackingData.length; i++) {
+        var row = document.createElement("div");
+        row.className = "tracking-row";
+        var html = '<div class="tracking-name-cell">' + trackingData[i].name + '</div>';
+        for (var j = 0; j < trackingColumns.length; j++) {
+            var col = trackingColumns[j];
+            html += '<button class="tracking-stat ' + col.className + '" onclick="incrementTrackingStat(' + i + ', \'" + col.key + "\')">' + trackingData[i][col.key] + '</button>';
+        }
+        row.innerHTML = html;
+        trackingRows.appendChild(row);
+    }
+}
+
+function incrementTrackingStat(playerIndex, statKey) {
+    if (!trackingData[playerIndex]) return;
+    trackingData[playerIndex][statKey]++;
+    renderTrackingBoard();
+}
+
 initializeTrackingData();
-renderTrackingBoard();
-updateClockAlert();
+updateMainClockAlert();
