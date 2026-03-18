@@ -1,20 +1,23 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style-v2.css">
-  <title>Breakaway Clean</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Breakaway - Layout Limpo</title>
+  <link rel="stylesheet" href="style-v2.css" />
 </head>
 <body>
-  <main class="layout">
-    <section class="grid" id="playersGrid"></section>
+  <div class="app-shell">
+    <header class="topbar">
+      <button class="toolbar-btn">Carregar Equipa</button>
+      <button class="toolbar-btn">Carregar Jogo</button>
+      <button class="toolbar-btn primary">Guardar Jogo</button>
+    </header>
 
-    <aside class="right">
-      <div class="period">1</div>
-      <div class="score">0</div>
-    </aside>
-  </main>
+    <main class="board-wrap">
+      <section id="playersGrid" class="players-grid"></section>
+    </main>
+  </div>
 
   <script src="main.js"></script>
 </body>
