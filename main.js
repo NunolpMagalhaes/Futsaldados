@@ -76,24 +76,6 @@ var btnM3NegA = document.getElementById("m3-neg-a");
 //Analysis
 var tblAnl = document.getElementById("tbl-anl");
 
-var trackingRows = document.getElementById("trackingRows");
-var trackingColumns = [
-    { key: "remates_1p_r", className: "blue" },
-    { key: "remates_1p_re", className: "blue" },
-    { key: "remates_2p_r", className: "blue" },
-    { key: "remates_2p_re", className: "blue" },
-    { key: "passes_z1", className: "red" },
-    { key: "passes_z2", className: "red" },
-    { key: "passes_z3", className: "yellow" },
-    { key: "passes_z4", className: "green" },
-    { key: "perdas_z1", className: "red" },
-    { key: "perdas_z2", className: "red" },
-    { key: "perdas_z3", className: "yellow" },
-    { key: "perdas_z4", className: "green" }
-];
-var trackingData = [];
-
-
 // Helper
 const arrSum = arr => arr.reduce((a,b) => a + b, 0);
 //#endregion
@@ -305,7 +287,7 @@ clockBreak.onclick = function() {
 
     minutesM = "0";
     secondsM = "0";
-    displayClock(clockMain, minutesM, secondsM, 0, struct_time.period-1)
+    displayClock(clockMain, minutesM, secondsM, 0, struct_time.period)
 
     minutesP = "0";
     secondsP = "0";
@@ -402,13 +384,19 @@ clockStop.onclick = function() {
 }
 function startMain() {
     secondsM++;
-    
+
     if (secondsM > 59) {
         minutesM++;
         secondsM = 0;
     }
 
-    displayClock(clockMain, minutesM, secondsM, 0, struct_time.period-1)
+    if ((minutesM * 60 + secondsM) >= (struct_general.per_time[struct_time.period-1] * 60)) {
+        clearInterval(IntervalM);
+        minutesM = struct_general.per_time[struct_time.period-1];
+        secondsM = 0;
+    }
+
+    displayClock(clockMain, minutesM, secondsM, 0, struct_time.period-1);
     updateMainClockAlert();
 }
 function startPlay() {
@@ -442,20 +430,15 @@ function displayClock(clockTxt, minutes, seconds, mode, per) {
     if (per < struct_general.nper) {
         // mode: 0 - Main Clock, 1 - Play Clock
         if (mode==0) {
-            var secondsTotal = 60*struct_general.per_time[per] - (parseInt(seconds) + 60*parseInt(minutes));
-            if (secondsTotal >= 0) {
-                clockTxt.innerHTML = setClock(secondsTotal);
-            } else {
-                var minutesTxt = Math.ceil(secondsTotal/60);
-                var secondsTxt = Math.abs(secondsTotal - 60*minutesTxt);
-                if (minutesTxt > -10) {
-                    minutesTxt = "-0" + Math.abs(minutesTxt);
-                }
-                if (secondsTxt < 10) {
-                    secondsTxt = "0" + secondsTxt;
-                }
-                clockTxt.innerHTML = minutesTxt + ":" + secondsTxt;
+            var minutesTxt = parseInt(minutes)
+            var secondsTxt = parseInt(seconds)
+            if(minutes<=9){
+                minutesTxt = "0" + parseInt(minutes)
             }
+            if(seconds<=9){
+                secondsTxt = "0" + parseInt(seconds)
+            }
+            clockTxt.innerHTML = minutesTxt + ":" + secondsTxt;
         } else {
             var secondsTotal = 60*struct_general.per_time[per] - (parseInt(seconds) + 60*parseInt(minutes))
             if (secondsTotal>=0) {
@@ -476,17 +459,6 @@ function displayClock(clockTxt, minutes, seconds, mode, per) {
         clockTxt.innerHTML = "--:--"
     }
 }
-function updateMainClockAlert() {
-    if (!clockMain) return;
-    var elapsed = parseInt(minutesM)*60 + parseInt(secondsM);
-    clockMain.classList.remove("alert-3min", "alert-4min");
-    if (elapsed >= 240) {
-        clockMain.classList.add("alert-4min");
-    } else if (elapsed >= 180) {
-        clockMain.classList.add("alert-3min");
-    }
-}
-
 function parseClock(clockTxt, mode) {
     // 0: Main Clock, 1: Play Clock
     if (mode==0) {
@@ -1019,7 +991,6 @@ btnLoadMatch.onchange = function() {
             updateAnlUITable();
             updateLiveVis();
             updateLiveButtons();
-            initializeTrackingData();
             clockPer.innerHTML = struct_time["period"];
             clockMain.innerHTML = struct_time["clock_main"];
             clockPlay.innerHTML = struct_time["clock_play"];
@@ -1258,7 +1229,9 @@ window.onload = function() {
     document.getElementById("pnl-metrics").style.display = "none";
     document.getElementById("pnl-analysis").style.display = "none";
     document.getElementById("pnl-stop").style.display = "none";
+    displayClock(clockMain, minutesM, secondsM, 0, 0);
     initializeTrackingData();
+    updateMainClockAlert();
 }
 //#endregion
 
@@ -1340,6 +1313,23 @@ function getAllIndexes(arr, val) {
 }
 
 
+var trackingRows = document.getElementById("trackingRows");
+var trackingData = [];
+var trackingColumns = [
+    { key: "remates_1p_r", className: "blue" },
+    { key: "remates_1p_re", className: "blue" },
+    { key: "remates_2p_r", className: "blue" },
+    { key: "remates_2p_re", className: "blue" },
+    { key: "passes_z1", className: "red" },
+    { key: "passes_z2", className: "red" },
+    { key: "passes_z3", className: "yellow" },
+    { key: "passes_z4", className: "green" },
+    { key: "perdas_z1", className: "red" },
+    { key: "perdas_z2", className: "red" },
+    { key: "perdas_z3", className: "yellow" },
+    { key: "perdas_z4", className: "green" }
+];
+
 function initializeTrackingData() {
     trackingData = [];
     for (var i = 0; i < struct_team.players.length; i++) {
@@ -1362,7 +1352,8 @@ function renderTrackingBoard() {
         var html = '<div class="tracking-name-cell">' + trackingData[i].name + '</div>';
         for (var j = 0; j < trackingColumns.length; j++) {
             var col = trackingColumns[j];
-            html += '<button class="tracking-stat ' + col.className + '" onclick="incrementTrackingStat(' + i + ', \'" + col.key + "\')">' + trackingData[i][col.key] + '</button>';
+            html += '<button class="tracking-stat ' + col.className + '" onclick="incrementTrackingStat(' + i + ', \''
+                + col.key + '\')">' + trackingData[i][col.key] + '</button>';
         }
         row.innerHTML = html;
         trackingRows.appendChild(row);
@@ -1374,6 +1365,3 @@ function incrementTrackingStat(playerIndex, statKey) {
     trackingData[playerIndex][statKey]++;
     renderTrackingBoard();
 }
-
-initializeTrackingData();
-updateMainClockAlert();
