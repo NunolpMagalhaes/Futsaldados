@@ -18,7 +18,7 @@ html,body{
 #app-container{padding:10px}
 #grid-container{
   display:grid;
-  grid-template-columns:minmax(860px,1fr) 300px;
+  grid-template-columns:minmax(830px,1fr) 300px;
   grid-template-areas:
     "header header"
     "field right"
@@ -56,16 +56,16 @@ html,body{
   background:linear-gradient(180deg,#171c23 0%, #11161d 100%);
   display:grid;
   grid-template-columns:repeat(4,1fr);
-  gap:8px;
+  gap:10px;
   align-content:start;
 }
 .player{
   position:relative;
-  min-height:150px;
+  min-height:168px;
   border-radius:18px;
   background:linear-gradient(180deg,#44505f 0%, #2d3846 100%);
   border:1px solid rgba(0,0,0,.45);
-  padding:14px 12px 12px;
+  padding:14px 12px 14px;
   display:flex;
   flex-direction:column;
   justify-content:flex-start;
@@ -78,24 +78,24 @@ html,body{
 }
 .player.selected{box-shadow:inset 0 0 0 3px #fff,inset 0 0 0 6px var(--yellow)}
 .jersey-no{
-  position:absolute;top:12px;left:14px;margin:0;font-size:18px;font-weight:900;color:var(--cyan);line-height:1;
+  position:absolute;top:12px;left:14px;margin:0;font-size:19px;font-weight:900;color:var(--cyan);line-height:1;
 }
 .player.active::after{
-  content:"1";position:absolute;top:12px;right:12px;min-width:40px;height:40px;padding:0 8px;border-radius:14px;
-  background:linear-gradient(180deg,#f7c800 0%, #efad00 100%);color:#111827;font-size:18px;font-weight:900;
+  content:"1";position:absolute;top:12px;right:12px;min-width:36px;height:36px;padding:0 8px;border-radius:12px;
+  background:linear-gradient(180deg,#f7c800 0%, #efad00 100%);color:#111827;font-size:17px;font-weight:900;
   display:flex;align-items:center;justify-content:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.35);
 }
 .jersey-name{
-  margin:10px 0 10px 0;font-size:14px;font-weight:800;color:#f7f8fa;text-align:center;line-height:1.1;
+  margin:16px 0 10px 0;font-size:17px;font-weight:800;color:#f7f8fa;text-align:center;line-height:1.1;
 }
 .jersey-time{
-  margin:22px 0 12px 0;font-size:50px;font-weight:900;text-align:center;line-height:1;color:#dbe0e8;
+  margin:28px 0 12px 0;font-size:58px;font-weight:900;text-align:center;line-height:1;color:#dbe0e8;
 }
 .player.active .jersey-time{color:var(--green)}
 .player:not(.active) .jersey-time{color:#dbe0e8}
 .jersey-total{
-  position:absolute;left:12px;bottom:12px;margin:0;min-width:84px;padding:6px 12px;border-radius:16px;
-  border:3px solid #38f1a4;background:rgba(41,59,77,.85);color:#58ffb4;font-size:15px;font-weight:900;text-align:center;line-height:1;
+  position:absolute;left:12px;bottom:12px;margin:0;min-width:96px;padding:7px 12px;border-radius:16px;
+  border:3px solid #38f1a4;background:rgba(41,59,77,.85);color:#58ffb4;font-size:18px;font-weight:900;text-align:center;line-height:1;
 }
 .jersey-rot,.jersey-wr,.jersey-tp,.jersey-tr{display:none!important}
 .jersey{position:absolute;inset:0;width:100%;height:100%;border:none;background:transparent;opacity:0;cursor:pointer}
@@ -113,7 +113,7 @@ html,body{
   font-weight:900;line-height:1;padding:10px 4px;box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 2px 10px rgba(0,0,0,.10);
 }
 .clock{font-size:32px}
-.period,.score-click{font-size:30px}
+.period,.score-click{font-size:28px}
 .break{opacity:.88}
 .pause{box-shadow:inset 0 0 0 2px rgba(255,255,255,.35)}
 .toggle{box-shadow:inset 0 0 0 3px rgba(255,255,255,.75)}
@@ -127,7 +127,7 @@ html,body{
   border-bottom:1px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;
 }
 #home{border-right:1px solid rgba(255,255,255,.15)}
-.score-click{border:none;width:100%;min-height:70px;cursor:pointer}
+.score-click{border:none;width:100%;min-height:56px;cursor:pointer}
 .score-box{display:none!important}
 .clock.alert-3min{animation:blinkClock .8s infinite}
 .clock.alert-4min{background:linear-gradient(180deg,#ef4444 0%, #b91c1c 100%);color:#fff}
