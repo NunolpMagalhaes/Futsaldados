@@ -221,3 +221,38 @@ body{min-height:100vh}
 .tracking-stat.yellow{background:linear-gradient(180deg,#fde047 0%, #eab308 100%);color:#111827;}
 .tracking-stat.green{background:linear-gradient(180deg,#4ade80 0%, #16a34a 100%);}
 @media (max-width: 1200px){#grid-container{grid-template-columns:1fr;grid-template-areas:"header" "right" "field" "tracking";}#right-column{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:none;}}
+
+
+/* ===== Ajuste fino pedido ===== */
+.player{
+  min-height:190px;
+  padding:14px 10px 12px;
+}
+.jersey-no{
+  position:absolute;
+  top:10px;
+  left:12px;
+  margin:0;
+  font-size:18px;
+  font-weight:900;
+  text-align:left;
+  line-height:1;
+}
+.jersey-name{
+  margin:8px 0 12px 0;
+  font-size:18px;
+  font-weight:800;
+  text-align:center;
+  line-height:1.1;
+}
+.jersey-time{
+  font-size:36px;
+  margin:0 0 8px 0;
+}
+.period{
+  font-size:22px;
+}
+.score-click{
+  font-size:20px;
+  min-height:38px;
+}
