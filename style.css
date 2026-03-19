@@ -179,7 +179,16 @@ body {
 }
 
 .jersey-wr {
-  display: none;
+  position: absolute;
+  top: 65%;
+  left: 5%;
+  height: 20%;
+  width: 90%;
+  font-size: 2.5vh;
+  font-weight: bold;
+  font-family: Helvetica;
+  text-align: center;
+  color: var(--slate1);
 }
 
 .jersey-tp {
