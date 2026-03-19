@@ -89,13 +89,13 @@ html,body{
   margin:10px 0 10px 0;font-size:14px;font-weight:800;color:#f7f8fa;text-align:center;line-height:1.1;
 }
 .jersey-time{
-  margin:22px 0 12px 0;font-size:50px;font-weight:900;text-align:center;line-height:1;color:#dbe0e8;
+  margin:26px 0 10px 0;font-size:40px;font-weight:900;text-align:center;line-height:1;color:#dbe0e8;
 }
 .player.active .jersey-time{color:var(--green)}
 .player:not(.active) .jersey-time{color:#dbe0e8}
 .jersey-total{
-  position:absolute;left:12px;bottom:12px;margin:0;min-width:84px;padding:6px 12px;border-radius:16px;
-  border:3px solid #38f1a4;background:rgba(41,59,77,.85);color:#58ffb4;font-size:15px;font-weight:900;text-align:center;line-height:1;
+  position:absolute;left:12px;bottom:12px;margin:0;min-width:72px;padding:4px 10px;border-radius:16px;
+  border:3px solid #38f1a4;background:rgba(41,59,77,.85);color:#58ffb4;font-size:12px;font-weight:900;text-align:center;line-height:1;
 }
 .jersey-rot,.jersey-wr,.jersey-tp,.jersey-tr{display:none!important}
 .jersey{position:absolute;inset:0;width:100%;height:100%;border:none;background:transparent;opacity:0;cursor:pointer}
