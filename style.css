@@ -242,7 +242,7 @@ body {
 #pnl-time {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 0.5fr 1fr 1fr;
+  grid-template-rows: 1.5fr 1.5fr 0.7fr 1fr 1fr;
   grid-template-areas:
     "kick-off break pause"
     "kick-off break pause"
