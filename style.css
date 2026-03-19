@@ -717,3 +717,9 @@ body {
 /* ANALYSIS PANEL */
 
 #pnl-analysis { grid-area: pnl-analysis; }
+
+#pnl-time .button-1 {
+  height: 6vh !important;
+  font-size: 2vh !important;
+  font-weight: bold;
+}
