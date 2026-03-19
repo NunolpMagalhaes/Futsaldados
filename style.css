@@ -44,15 +44,12 @@ body {
 #grid-container {
   display: grid;
   grid-template-columns: 16vw 16vw 16vw 16vw 21vw;
-  grid-template-rows: 8vh 18vh 18vh 12vh 12vh 12vh 12vh 40vh;
+  grid-template-rows: 8vh 18vh 18vh 18vh 40vh;
   gap: 1vh 1vw;
   grid-template-areas:
     "header header header header header"
     "pnl-field pnl-field pnl-field pnl-field pnl-time"
-    "pnl-field pnl-field pnl-field pnl-field pnl-stop"
-    "pnl-field pnl-field pnl-field pnl-field pnl-metrics"
-    "pnl-field pnl-field pnl-field pnl-field pnl-metrics"
-    "pnl-field pnl-field pnl-field pnl-field pnl-metrics"
+    "pnl-field pnl-field pnl-field pnl-field pnl-match"
     "pnl-field pnl-field pnl-field pnl-field pnl-match"
     "pnl-analysis pnl-analysis pnl-analysis pnl-analysis pnl-analysis";
 }
@@ -179,16 +176,7 @@ body {
 }
 
 .jersey-wr {
-  position: absolute;
-  top: 65%;
-  left: 5%;
-  height: 20%;
-  width: 90%;
-  font-size: 2.5vh;
-  font-weight: bold;
-  font-family: Helvetica;
-  text-align: center;
-  color: var(--slate1);
+  display: none;
 }
 
 .jersey-tp {
@@ -242,7 +230,7 @@ body {
 #pnl-time {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 1.5fr 1.5fr 0.7fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 0.5fr 1fr 1fr;
   grid-template-areas:
     "kick-off break pause"
     "kick-off break pause"
@@ -718,8 +706,11 @@ body {
 
 #pnl-analysis { grid-area: pnl-analysis; }
 
-#pnl-time .button-1 {
-  height: 6vh !important;
-  font-size: 2vh !important;
-  font-weight: bold;
+#pnl-stop,
+#pnl-metrics {
+  display: none !important;
+}
+
+#pnl-match {
+  align-self: start;
 }
