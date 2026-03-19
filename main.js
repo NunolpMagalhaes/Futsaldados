@@ -1,1 +1,1 @@
-// Usa o teu main.js atual
+console.log('clean version');
