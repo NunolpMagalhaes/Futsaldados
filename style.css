@@ -41,13 +41,13 @@ body {
 
 #grid-container {
   display: grid;
-  grid-template-columns: 14.8vw 14.8vw 14.8vw 14.8vw 24vw;
-  grid-template-rows: 8vh 17.2vh 17.2vh 17.2vh 34vh;
+  grid-template-columns: 14.6vw 14.6vw 14.6vw 14.6vw 23vw;
+  grid-template-rows: 8vh auto auto 40vh;
   gap: 1vh 1vw;
+  align-items: start;
   grid-template-areas:
     "header header header header header"
     "pnl-field pnl-field pnl-field pnl-field pnl-time"
-    "pnl-field pnl-field pnl-field pnl-field pnl-match"
     "pnl-field pnl-field pnl-field pnl-field pnl-match"
     "pnl-analysis pnl-analysis pnl-analysis pnl-analysis pnl-analysis";
 }
@@ -88,8 +88,9 @@ body {
   border-style: solid;
   border-radius: 5%;
   background-color: var(--grey2);
-  height: 100%;
   width: 100%;
+  min-height: 13vh;
+  aspect-ratio: 1.22 / 1;
   outline: none;
 }
 .active {
@@ -125,8 +126,8 @@ body {
 }
 .jersey-name {
   position: absolute;
-  top: 1%;
-  left: -1.5%;
+  top: 0%;
+  left: -2.5%;
   width: 100%;
   font-size: 2.75vh;
   font-weight: normal;
@@ -150,10 +151,10 @@ body {
 }
 .jersey-time {
   position: absolute;
-  top: 13%;
-  left: 7%;
-  height: 48%;
-  width: 86%;
+  top: 10%;
+  left: 5%;
+  height: 50%;
+  width: 90%;
   font-size: 6vh;
   font-weight: bold;
   font-family: Helvetica;
@@ -163,8 +164,8 @@ body {
 .jersey-wr { display: none; }
 .jersey-tp {
   position: absolute;
-  top: 73%;
-  left: 3%;
+  top: 70%;
+  left: 2%;
   height: 15%;
   width: 25%;
   font-size: 2vh;
@@ -179,8 +180,8 @@ body {
 }
 .jersey-tr {
   position: absolute;
-  top: 73%;
-  left: 72%;
+  top: 70%;
+  left: 71%;
   height: 15%;
   width: 25%;
   font-size: 2vh;
@@ -200,7 +201,7 @@ body {
   background-image: linear-gradient(180deg, var(--grey2), var(--grey0));
   border-radius: 0.75vh;
   gap: 0.5vh 0.5vw;
-  padding: 0.9vh;
+  padding: 1vh;
 }
 .panel.header {
   background-image: linear-gradient(180deg, #000, var(--grey0));
@@ -209,41 +210,45 @@ body {
 
 #pnl-time {
   display: grid;
-  grid-template-columns: 1.2fr 1.2fr 0.82fr;
-  grid-template-rows: 0.42fr 1fr 1.08fr;
+  grid-template-columns: 1.15fr 1.15fr 0.7fr;
+  grid-template-rows: auto auto auto;
+  row-gap: 0.9vh;
+  column-gap: 0.8vh;
   grid-template-areas:
     "lbl-clock-main lbl-clock-main lbl-period"
     "clock-main clock-main period"
     "kick-off pause break";
   grid-area: pnl-time;
+  align-content: start;
 }
 
 #pnl-stop, #pnl-metrics { display:none !important; }
 
 #pnl-match {
   display: grid;
-  grid-template-columns: 1.1fr 1fr 1fr 1.1fr;
-  grid-template-rows: 0.82fr 1.4fr;
-  gap: 0.65vh 0;
+  grid-template-columns: 0.9fr 1fr 1fr 0.9fr;
+  grid-template-rows: auto auto;
+  row-gap: 0.9vh;
   grid-template-areas:
     "home home away away"
     ". score-h score-a .";
   grid-area: pnl-match;
   align-self: start;
-  padding: 0.8vh;
+  padding-top: 0.8vh;
 }
 
 #pnl-field {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr 1fr;
-  gap: 0.5vh 0.5vh;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-rows: repeat(4, auto);
+  gap: 0.7vh 0.5vw;
   grid-template-areas:
     "btn1 btn2 btn3 btn4"
     "btn5 btn6 btn7 btn8"
     "btn9 btn10 btn11 btn12"
     "btn13 btn14 btn15 btn16";
   grid-area: pnl-field;
+  align-content: start;
 }
 
 /* INPUTS */
@@ -258,9 +263,8 @@ body {
   transition: 0.4s linear all;
 }
 #pnl-time .button-1 {
-  height: 5.7vh !important;
-  font-size: 1.95vh !important;
-  margin-top: 0.45vh;
+  height: 6vh !important;
+  font-size: 2vh !important;
 }
 .button-1.normal {
   background-image: linear-gradient(180deg, var(--grey3) 0%, var(--grey2) 100%);
@@ -351,14 +355,17 @@ body {
 /* TIME PANEL */
 #lbl-period {
   grid-area: lbl-period;
-  font-size: 1.35vh;
+  font-size: 1.5vh;
   border-radius: 0.75vh 0.75vh 0vh 0vh;
   background-image: linear-gradient(180deg, var(--grey0) 0%, var(--grey1) 100%);
 }
 #period {
   grid-area: period;
-  font-size: 5.4vh;
+  font-size: 5.2vh;
   font-weight: bold;
+  width: 100%;
+  max-width: 6.5vh;
+  justify-self: stretch;
 }
 #pause { grid-area: pause; }
 #break { grid-area: break; }
@@ -379,55 +386,50 @@ body {
 
 /* MATCH PANEL */
 #home, #away {
-  font-size: 2.45vh;
+  font-size: 2vh;
   font-weight: bold;
+  min-height: 6vh;
+  padding: 0.4vh 0.8vh;
   display: flex;
   align-items: center;
   justify-content: center;
+  text-align: center;
   color: var(--grey7);
-  background-image: linear-gradient(180deg, var(--grey2) 0%, var(--grey1) 100%);
-  min-height: 5.7vh;
-  padding: 0.2vh 0.6vh;
+  background-image: linear-gradient(180deg, var(--green1) 0%, var(--green2) 100%);
 }
 #home {
   grid-area: home;
-  border-radius: 0.75vh 0 0 0.75vh;
-  border-right: 0.15vh solid var(--grey3);
-  margin-right: 0.45vh;
+  border-radius: 0.75vh 0vh 0vh 0vh;
+  border-right: var(--grey3);
+  border-right-style: solid;
 }
 #away {
   grid-area: away;
-  border-radius: 0 0.75vh 0.75vh 0;
-  border-left: 0.15vh solid var(--grey3);
-  margin-left: 0.45vh;
+  border-radius: 0vh 0.75vh 0vh 0vh;
+  border-left: var(--grey3);
+  border-left-style: solid;
 }
-#goal-h, #goal-a {
-  display:none !important;
-  visibility:hidden !important;
-  width:0 !important;
-  height:0 !important;
-  overflow:hidden !important;
-}
+#goal-h, #goal-a { display:none !important; }
 #score-h, #score-a {
-  font-size: 6vh;
+  font-size: 5.2vh;
   font-weight: bold;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 0;
+  min-height: 10vh;
+  border-radius: 0vh;
   background-image: linear-gradient(180deg, var(--orange) 0%, var(--yellow2) 100%);
   z-index: 2;
-  min-height: 7.5vh;
 }
 #score-h {
   grid-area: score-h;
-  border-right: 0.15vh solid var(--grey3);
-  border-radius: 0.4vh 0 0 0.4vh;
+  border-right: var(--grey3);
+  border-right-style: solid;
 }
 #score-a {
   grid-area: score-a;
-  border-left: 0.15vh solid var(--grey3);
-  border-radius: 0 0.4vh 0.4vh 0;
+  border-left: var(--grey3);
+  border-left-style: solid;
 }
 
 /* TEAM PANEL */
@@ -450,3 +452,8 @@ body {
 
 /* ANALYSIS PANEL */
 #pnl-analysis { grid-area: pnl-analysis; }
+
+
+#home { margin-right: 0.3vw; }
+#away { margin-left: 0.3vw; }
+#kick-off, #pause, #break { margin-top: 0.5vh; }

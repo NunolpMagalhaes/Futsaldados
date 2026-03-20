@@ -936,8 +936,8 @@ function updateTeamInfo(mInfo, pInfo) {
     btnM3A.innerHTML = struct_match.initials[1];
     txtHome.innerHTML = struct_match.initials[0];
     txtAway.innerHTML = struct_match.initials[1];
-    txtHome.style.fontSize = "3vh"
-    txtAway.style.fontSize = "3vh"
+    txtHome.style.fontSize = "2vh"
+    txtAway.style.fontSize = "2vh"
     btnGH.innerHTML = struct_match.initials[0] + "\n Goal";
     btnGA.innerHTML = struct_match.initials[1] + "\n Goal";
 
