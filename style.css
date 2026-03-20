@@ -90,9 +90,9 @@ body {
   border-radius: 5%;
   background-color: var(--grey2);
   width: 100%;
-  height: 21vh !important;
-  min-height: 21vh !important;
-  aspect-ratio: auto !important;
+  height: auto;
+  min-height: 16vh;
+  aspect-ratio: 1.72 / 1;
   outline: none;
 }
 .active {
@@ -237,11 +237,10 @@ body {
 
 #pnl-field {
   display: grid;
-  grid-template-columns: repeat(4, 0.85fr);
-  grid-auto-rows: 21vh !important;
-  gap: 1vh 1vh;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-auto-rows: auto;
+  gap: 0.45vh 0.45vh;
   align-content: start;
-  justify-content: center;
   grid-template-areas:
     "btn1 btn2 btn3 btn4"
     "btn5 btn6 btn7 btn8"
@@ -445,9 +444,15 @@ body {
 /* ANALYSIS PANEL */
 #pnl-analysis { grid-area: pnl-analysis; }
 
+#lbl-clock-main,
+#lbl-period {
+  font-size: 2vh !important;
+}
 
-#kick-off,
-#pause,
-#break {
-  margin-top: 3vh;
+#clock-main {
+  font-size: 4vh !important;
+}
+
+#period {
+  font-size: 4.5vh !important;
 }
