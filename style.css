@@ -360,7 +360,7 @@ body {
 }
 #period {
   grid-area: period;
-  font-size: 6vh;
+  font-size: 5vh;
   font-weight: bold;
 }
 #pause { grid-area: pause; }
@@ -382,13 +382,13 @@ body {
 
 /* MATCH PANEL */
 #home, #away {
-  font-size: 2.5vh;
+  font-size: 2vh;
   font-weight: bold;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--grey7);
-  background-image: linear-gradient(180deg, var(--green1) 0%, var(--green2) 100%);
+  background-image: linear-gradient(180deg, var(--grey0) 0%, var(--grey0) 100%);
 }
 #home {
   grid-area: home;
@@ -404,13 +404,13 @@ body {
 }
 #goal-h, #goal-a { display:none !important; }
 #score-h, #score-a {
-  font-size: 6vh;
+  font-size: 3vh;
   font-weight: bold;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 0vh;
-  background-image: linear-gradient(180deg, var(--orange) 0%, var(--yellow2) 100%);
+  background-image: linear-gradient(180deg, var(--) 0%, var(--) 100%);
   z-index: 2;
 }
 #score-h {
@@ -458,5 +458,5 @@ body {
 #competition-title {
   grid-area: competition;
   text-align: center;
-  font-size: 2vh;
+  font-size: 4vh;
 }
