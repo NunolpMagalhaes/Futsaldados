@@ -449,4 +449,8 @@ body {
 #lbl-period {
   font-size: 2vh;
   font-weight: bolder;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
