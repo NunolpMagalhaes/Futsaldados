@@ -213,11 +213,12 @@ body {
 #pnl-time {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 0.5fr 1fr 1fr;
+  grid-template-rows: 0.5fr 1fr 1fr 0.6fr;
   grid-template-areas:
     "lbl-clock-main lbl-clock-main lbl-period"
     "clock-main clock-main period"
-    "kick-off pause break";
+    "kick-off pause break"
+    "competition-mini competition-mini competition-mini";
   grid-area: pnl-time;
 }
 
@@ -445,18 +446,10 @@ body {
 /* ANALYSIS PANEL */
 #pnl-analysis { grid-area: pnl-analysis; }
 
-
-#score-h,
-#score-a {
-  background-image: none;
-  background-color: var(--grey2);
-}
-
-#competition-title,
-#lbl-clock-main,
-#lbl-period {
+#competition-mini {
+  grid-area: competition-mini;
+  margin-top: 1vh;
   font-size: 2vh;
-  font-weight: bolder;
   display: flex;
   align-items: center;
   justify-content: center;
