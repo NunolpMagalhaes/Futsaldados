@@ -226,12 +226,13 @@ body {
 #pnl-match {
   display: grid;
   grid-template-columns: 1fr 2fr 2fr 1fr;
-  grid-template-rows: 0.6fr 1fr 2fr;
+  grid-template-rows: 1fr 2fr;
+  gap: 0px 0px;
   grid-template-areas:
-    "competition competition competition competition"
     "home home away away"
     ". score-h score-a .";
   grid-area: pnl-match;
+  align-self: start;
 }
 
 #pnl-field {
@@ -443,8 +444,9 @@ body {
 /* ANALYSIS PANEL */
 #pnl-analysis { grid-area: pnl-analysis; }
 
-#competition-title {
-  grid-area: competition;
-  text-align: center;
+#competition-title,
+#lbl-clock-main,
+#lbl-period {
   font-size: 2vh;
+  font-weight: bolder;
 }
