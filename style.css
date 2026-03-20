@@ -91,7 +91,7 @@ body {
   background-color: var(--grey2);
   width: 100%;
   height: auto;
-  min-height: 13.2vh;
+  min-height: 16vh;
   aspect-ratio: 1.72 / 1;
   outline: none;
 }
