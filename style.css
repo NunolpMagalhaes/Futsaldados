@@ -225,14 +225,26 @@ body {
 
 #pnl-match {
   display: grid;
-  grid-template-columns: 1fr 2fr 2fr 1fr;
-  grid-template-rows: 1fr 2fr;
-  gap: 0px 0px;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto auto;
   grid-template-areas:
-    "home home away away"
-    ". score-h score-a .";
-  grid-area: pnl-match;
-  align-self: start;
+    "competition competition"
+    "home away"
+    "score-h score-a";
+  margin-top: 3vh;
+}
+
+#competition-title {
+  grid-area: competition;
+  text-align: center;
+  font-size: 2.3vh;
+  font-weight: bold;
+  background-image: linear-gradient(180deg, var(--grey0) 0%, var(--grey1) 100%);
+  border-radius: 0.75vh;
+  min-height: 4vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 #pnl-field {
@@ -354,13 +366,13 @@ body {
 /* TIME PANEL */
 #lbl-period {
   grid-area: lbl-period;
-  font-size: 1.5vh;
+  font-size: 2.5vh;
   border-radius: 0.75vh 0.75vh 0vh 0vh;
   background-image: linear-gradient(180deg, var(--grey0) 0%, var(--grey1) 100%);
 }
 #period {
   grid-area: period;
-  font-size: 5vh;
+  font-size: 6vh;
   font-weight: bold;
 }
 #pause { grid-area: pause; }
@@ -368,7 +380,7 @@ body {
 #kick-off { grid-area: kick-off; }
 #lbl-clock-main {
   grid-area: lbl-clock-main;
-  font-size: 1.5vh;
+  font-size: 2.5vh;
   border-radius: 0.75vh 0.75vh 0vh 0vh;
   background-image: linear-gradient(180deg, var(--grey0) 0%, var(--grey1) 100%);
 }
@@ -382,14 +394,17 @@ body {
 
 /* MATCH PANEL */
 #home, #away {
-  font-size: 2vh;
+  font-size: 2.5vh;
   font-weight: bold;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--grey7);
-  background-image: linear-gradient(180deg, var(--grey0) 0%, var(--grey0) 100%);
+  background-image: linear-gradient(180deg, var(--grey0) 0%, var(--grey1) 100%);
+  border-radius: 0.75vh;
+  min-height: 4vh;
 }
+
 #home {
   grid-area: home;
   border-radius: 0.75vh 0vh 0vh 0vh;
@@ -404,14 +419,13 @@ body {
 }
 #goal-h, #goal-a { display:none !important; }
 #score-h, #score-a {
-  font-size: 3vh;
+  font-size: 6vh;
   font-weight: bold;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 0vh;
-  background-image: linear-gradient(180deg, var(--) 0%, var(--) 100%);
-  z-index: 2;
+  background-image: none;
 }
 #score-h {
   grid-area: score-h;
@@ -445,18 +459,43 @@ body {
 /* ANALYSIS PANEL */
 #pnl-analysis { grid-area: pnl-analysis; }
 
-#pnl-match {
-  display: grid;
-  grid-template-columns: 1fr 2fr 2fr 1fr;
-  grid-template-rows: 0.6fr 1fr 2fr;
-  grid-template-areas:
-    "competition competition competition competition"
-    "home home away away"
-    ". score-h score-a .";
+
+#competition-title {
+  width: 100%;
+  text-align: center;
+  font-size: 2.5vh;
+  font-weight: bold;
+  margin-bottom: 0.5vh;
+}
+
+#competition-title,
+#home,
+#away {
+  background-color: #2a2a2a;
 }
 
 #competition-title {
-  grid-area: competition;
-  text-align: center;
-  font-size: 4vh;
+  margin-top: 1vh;
+}
+/* --- ALERTA TEMPO JOGADORA --- */
+.blink {
+  animation: blinkAnim 1s infinite;
+}
+
+@keyframes blinkAnim {
+  0% { opacity: 1; }
+  50% { opacity: 0.3; }
+  100% { opacity: 1; }
+}
+
+.danger {
+  animation: blinkRed 0.5s infinite;
+  background-color: #ff4d4d !important;
+  color: white !important;
+}
+
+@keyframes blinkRed {
+  0% { background-color: #ff4d4d; }
+  50% { background-color: #ff0000; }
+  100% { background-color: #ff4d4d; }
 }

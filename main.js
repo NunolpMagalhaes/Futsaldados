@@ -16,7 +16,7 @@ var clockBreak = document.getElementById("break");
 var clockPause = document.getElementById("pause");
 var clockStop = document.getElementById("stoppage");
 var secondsM = 0;
-var minutesM = 0;
+var minutesM = 20;
 var secondsP = 0;
 var minutesP = 0;
 var IntervalM;
@@ -26,6 +26,18 @@ var txtHome = document.getElementById("home")
 var txtAway = document.getElementById("away")
 var txtHScore = document.getElementById("score-h")
 var txtAScore = document.getElementById("score-a")
+txtHScore.style.cursor = "pointer";
+txtAScore.style.cursor = "pointer";
+
+txtHScore.addEventListener("click", function () {
+    struct_match["score"][0]++;
+    txtHScore.innerHTML = struct_match["score"][0];
+});
+
+txtAScore.addEventListener("click", function () {
+    struct_match["score"][1]++;
+    txtAScore.innerHTML = struct_match["score"][1];
+});
 var btnP1 = document.getElementById("btn1");
 var btnP2 = document.getElementById("btn2");
 var btnP3 = document.getElementById("btn3");
@@ -206,6 +218,9 @@ clockKickOff.onclick = function() {
 
         clearInterval(IntervalM);
         clearInterval(IntervalP);
+        minutesM = struct_general.per_time[struct_time.period-1];
+        secondsM = 0;
+        displayClock(clockMain, minutesM, secondsM, 0, struct_time.period-1);
         IntervalM = setInterval(startMain, 1000);
         IntervalP = setInterval(startPlay, 1000);
 
@@ -285,9 +300,10 @@ clockBreak.onclick = function() {
     tbl_match["player_no2"].push(-1);
     tbl_match["last_name2"].push("");
 
-    minutesM = "0";
-    secondsM = "0";
-    displayClock(clockMain, minutesM, secondsM, 0, struct_time.period)
+    var nextPerIdxM = Math.min(parseInt(struct_time.period), struct_general.nper-1);
+    minutesM = struct_general.per_time[nextPerIdxM];
+    secondsM = 0;
+    displayClock(clockMain, minutesM, secondsM, 0, nextPerIdxM)
 
     minutesP = "0";
     secondsP = "0";
@@ -383,11 +399,16 @@ clockStop.onclick = function() {
     tbl_match["active"].push("");
 }
 function startMain() {
-    secondsM++;
+    if (minutesM === 0 && secondsM === 0) {
+        clearInterval(IntervalM);
+        return;
+    }
 
-    if (secondsM > 59) {
-        minutesM++;
-        secondsM = 0;
+    if (secondsM === 0) {
+        minutesM--;
+        secondsM = 59;
+    } else {
+        secondsM--;
     }
 
     displayClock(clockMain, minutesM, secondsM, 0, struct_time.period-1)
@@ -597,36 +618,63 @@ function updateLiveVis() {
     colGBR = [79,191,111,24,160,251,249,92,80];
 
     perno = struct_time.period;
-    if (perno==0) {
-        perno=1;
+    if (perno == 0) {
+        perno = 1;
     }
-    tPlayDat = getKeyArray(struct_team.players, "tplay")
-    tRestDat = getKeyArray(struct_team.players, "trest")
-    for (i=1; i<=struct_general.nplay + struct_general.nsub; i++) {
-        // GET CLOCK COLOR
+
+    tPlayDat = getKeyArray(struct_team.players, "tplay");
+    tRestDat = getKeyArray(struct_team.players, "trest");
+
+    for (i = 1; i <= struct_general.nplay + struct_general.nsub; i++) {
+        // rotações
         txtRot = document.getElementById("rot" + i);
         txtRot.innerHTML = tbl_period.Rotations[perno][i-1];
 
+        // relógio principal do cartão
         txtClock = document.getElementById("time" + i);
         clockDat = struct_team.players[i-1].tplay;
-        cCol = getCellColor(tPlayDat, i-1, colG)
-        if (struct_team.players[i-1].active==0) {
+        cCol = getCellColor(tPlayDat, i-1, colG);
+
+        if (struct_team.players[i-1].active == 0) {
             clockDat = struct_team.players[i-1].trest;
-            cCol = getCellColor(tRestDat, i-1, colR)
+            cCol = getCellColor(tRestDat, i-1, colR);
         }
+
         txtClock.innerHTML = setClock(clockDat);
         txtClock.style.color = cCol;
 
-        wrRatio = Math.round(100*struct_team.players[i-1].tplay / (struct_team.players[i-1].trest+1))/100;
-        if (wrRatio>=1) {
+        // cartão jogadora
+       let playerCard = document.getElementById("play" + i);
 
-        }
+if (playerCard) {
+    let tempo = struct_team.players[i-1].tplay;
+
+    playerCard.classList.remove("blink", "danger");
+
+    if (struct_team.players[i-1].active == 1) {
+        playerCard.classList.add("active");
+
+       if (tempo >= 240) {
+    playerCard.classList.add("danger");
+} else if (tempo >= 180) {
+    playerCard.classList.add("blink");
+}
+
+    } else {
+        playerCard.classList.remove("active", "blink", "danger");
+    }
+}
+
+        // WR
+        wrRatio = Math.round(100 * struct_team.players[i-1].tplay / (struct_team.players[i-1].trest + 1)) / 100;
+
         txtWR = document.getElementById("wr" + i);
         txtWR.innerHTML = wrRatio;
         txtWR.style.color = getVisColorWR(wrRatio, colGBR);
 
         txtTP = document.getElementById("tp" + i);
         txtTP.innerHTML = setClock(struct_team.players[i-1].tplay);
+
         txtTR = document.getElementById("tr" + i);
         txtTR.innerHTML = setClock(struct_team.players[i-1].trest);
     }
@@ -695,11 +743,13 @@ function switchPlayers(selArray){
 
         // Update Analysis Table
         perno = struct_time["period"];
-        if (struct_time.kickofftgl==1) {
-            tbl_period.Rotations[perno][onID] += 1;
-            tbl_period.Rotations[0][onID] += 1;
-        }
-
+     if (struct_time.kickofftgl==1) {
+    tbl_period.Rotations[perno][offID] = 0;
+    tbl_period.Rotations[perno][onID] = 1;
+    tbl_period.Rotations[0][onID] += 1;
+}
+tbl_period.Rotations[perno][offID] = 0;
+tbl_period.Rotations[perno][onID] = 1;
         // Update Live Vis
         struct_team.players[onID].tplay = 0;
         struct_team.players[offID].trest = 0;
