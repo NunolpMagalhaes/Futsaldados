@@ -445,13 +445,15 @@ body {
 #pnl-analysis { grid-area: pnl-analysis; }
 
 
-/* Ajuste pedido: sem mexer nos cartões */
-#home,
-#away {
-  font-size: 2.2vh !important;
+/* remover laranja e centrar score */
+#score-h, #score-a {
+  background-image: none !important;
+  background-color: var(--grey2) !important;
+  text-align: center;
 }
 
-#score-h,
-#score-a {
-  font-size: 6vh !important;
+/* labels tempo e periodo maiores */
+#lbl-clock-main,
+#lbl-period {
+  font-size: 2.4vh;
 }
