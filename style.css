@@ -90,9 +90,8 @@ body {
   border-radius: 5%;
   background-color: var(--grey2);
   width: 100%;
-  height: auto;
-  min-height: 19vh;
-  aspect-ratio: 1.72 / 1;
+  height: 19vh;
+  aspect-ratio: unset;
   outline: none;
 }
 .active {
