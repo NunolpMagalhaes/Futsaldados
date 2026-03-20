@@ -90,9 +90,9 @@ body {
   border-radius: 5%;
   background-color: var(--grey2);
   width: 100%;
-  height: 21vh !important;
-  min-height: 21vh !important;
-  aspect-ratio: auto !important;
+  height: auto;
+  min-height: 16vh;
+  aspect-ratio: 1.72 / 1;
   outline: none;
 }
 .active {
@@ -226,22 +226,20 @@ body {
 #pnl-match {
   display: grid;
   grid-template-columns: 1fr 2fr 2fr 1fr;
-  grid-template-rows: 1fr 2fr;
-  gap: 0px 0px;
+  grid-template-rows: 0.6fr 1fr 2fr;
   grid-template-areas:
+    "competition competition competition competition"
     "home home away away"
     ". score-h score-a .";
   grid-area: pnl-match;
-  align-self: start;
 }
 
 #pnl-field {
   display: grid;
-  grid-template-columns: repeat(4, 0.85fr);
-  grid-auto-rows: 21vh !important;
-  gap: 1vh 1vh;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-auto-rows: auto;
+  gap: 0.45vh 0.45vh;
   align-content: start;
-  justify-content: center;
   grid-template-areas:
     "btn1 btn2 btn3 btn4"
     "btn5 btn6 btn7 btn8"
@@ -445,7 +443,8 @@ body {
 /* ANALYSIS PANEL */
 #pnl-analysis { grid-area: pnl-analysis; }
 
-#home, #away {
+#competition-title {
+  grid-area: competition;
+  text-align: center;
   font-size: 2vh;
-  height: 5vh;
 }
