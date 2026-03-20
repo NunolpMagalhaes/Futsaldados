@@ -41,8 +41,8 @@ body {
 
 #grid-container {
   display: grid;
-  grid-template-columns: 16vw 16vw 16vw 16vw 21vw;
-  grid-template-rows: 8vh 16vh 16vh 16vh 34vh;
+  grid-template-columns: 14.8vw 14.8vw 14.8vw 14.8vw 24vw;
+  grid-template-rows: 8vh 17.2vh 17.2vh 17.2vh 34vh;
   gap: 1vh 1vw;
   grid-template-areas:
     "header header header header header"
@@ -125,8 +125,8 @@ body {
 }
 .jersey-name {
   position: absolute;
-  top: 0%;
-  left: -2.5%;
+  top: 1%;
+  left: -1.5%;
   width: 100%;
   font-size: 2.75vh;
   font-weight: normal;
@@ -150,10 +150,10 @@ body {
 }
 .jersey-time {
   position: absolute;
-  top: 10%;
-  left: 5%;
-  height: 50%;
-  width: 90%;
+  top: 13%;
+  left: 7%;
+  height: 48%;
+  width: 86%;
   font-size: 6vh;
   font-weight: bold;
   font-family: Helvetica;
@@ -163,8 +163,8 @@ body {
 .jersey-wr { display: none; }
 .jersey-tp {
   position: absolute;
-  top: 70%;
-  left: 2%;
+  top: 73%;
+  left: 3%;
   height: 15%;
   width: 25%;
   font-size: 2vh;
@@ -179,8 +179,8 @@ body {
 }
 .jersey-tr {
   position: absolute;
-  top: 70%;
-  left: 71%;
+  top: 73%;
+  left: 72%;
   height: 15%;
   width: 25%;
   font-size: 2vh;
@@ -200,7 +200,7 @@ body {
   background-image: linear-gradient(180deg, var(--grey2), var(--grey0));
   border-radius: 0.75vh;
   gap: 0.5vh 0.5vw;
-  padding: 1vh;
+  padding: 0.9vh;
 }
 .panel.header {
   background-image: linear-gradient(180deg, #000, var(--grey0));
@@ -209,8 +209,8 @@ body {
 
 #pnl-time {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 0.5fr 1fr 1fr;
+  grid-template-columns: 1.2fr 1.2fr 0.82fr;
+  grid-template-rows: 0.42fr 1fr 1.08fr;
   grid-template-areas:
     "lbl-clock-main lbl-clock-main lbl-period"
     "clock-main clock-main period"
@@ -222,9 +222,9 @@ body {
 
 #pnl-match {
   display: grid;
-  grid-template-columns: 1.25fr 1fr 1fr 1.25fr;
-  grid-template-rows: 0.9fr 1.35fr;
-  gap: 0;
+  grid-template-columns: 1.1fr 1fr 1fr 1.1fr;
+  grid-template-rows: 0.82fr 1.4fr;
+  gap: 0.65vh 0;
   grid-template-areas:
     "home home away away"
     ". score-h score-a .";
@@ -258,8 +258,9 @@ body {
   transition: 0.4s linear all;
 }
 #pnl-time .button-1 {
-  height: 6vh !important;
-  font-size: 2vh !important;
+  height: 5.7vh !important;
+  font-size: 1.95vh !important;
+  margin-top: 0.45vh;
 }
 .button-1.normal {
   background-image: linear-gradient(180deg, var(--grey3) 0%, var(--grey2) 100%);
@@ -350,13 +351,13 @@ body {
 /* TIME PANEL */
 #lbl-period {
   grid-area: lbl-period;
-  font-size: 1.5vh;
+  font-size: 1.35vh;
   border-radius: 0.75vh 0.75vh 0vh 0vh;
   background-image: linear-gradient(180deg, var(--grey0) 0%, var(--grey1) 100%);
 }
 #period {
   grid-area: period;
-  font-size: 6vh;
+  font-size: 5.4vh;
   font-weight: bold;
 }
 #pause { grid-area: pause; }
@@ -378,23 +379,27 @@ body {
 
 /* MATCH PANEL */
 #home, #away {
-  font-size: 3vh;
+  font-size: 2.45vh;
   font-weight: bold;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--grey7);
   background-image: linear-gradient(180deg, var(--grey2) 0%, var(--grey1) 100%);
+  min-height: 5.7vh;
+  padding: 0.2vh 0.6vh;
 }
 #home {
   grid-area: home;
-  border-radius: 0.75vh 0 0 0;
+  border-radius: 0.75vh 0 0 0.75vh;
   border-right: 0.15vh solid var(--grey3);
+  margin-right: 0.45vh;
 }
 #away {
   grid-area: away;
-  border-radius: 0 0.75vh 0 0;
+  border-radius: 0 0.75vh 0.75vh 0;
   border-left: 0.15vh solid var(--grey3);
+  margin-left: 0.45vh;
 }
 #goal-h, #goal-a {
   display:none !important;
