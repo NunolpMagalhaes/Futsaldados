@@ -213,12 +213,11 @@ body {
 #pnl-time {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 0.5fr 1fr 1fr 0.6fr;
+  grid-template-rows: 0.5fr 1fr 1fr;
   grid-template-areas:
     "lbl-clock-main lbl-clock-main lbl-period"
     "clock-main clock-main period"
-    "kick-off pause break"
-    "competition-mini competition-mini competition-mini";
+    "kick-off pause break";
   grid-area: pnl-time;
 }
 
@@ -446,11 +445,18 @@ body {
 /* ANALYSIS PANEL */
 #pnl-analysis { grid-area: pnl-analysis; }
 
-#competition-mini {
-  grid-area: competition-mini;
-  margin-top: 1vh;
+#pnl-match {
+  display: grid;
+  grid-template-columns: 1fr 2fr 2fr 1fr;
+  grid-template-rows: 0.6fr 1fr 2fr;
+  grid-template-areas:
+    "competition competition competition competition"
+    "home home away away"
+    ". score-h score-a .";
+}
+
+#competition-title {
+  grid-area: competition;
+  text-align: center;
   font-size: 2vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
