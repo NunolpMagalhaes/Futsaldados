@@ -42,7 +42,7 @@ body {
 #grid-container {
   display: grid;
   grid-template-columns: 16vw 16vw 16vw 16vw 21vw;
-  grid-template-rows: 8vh 18vh 18vh 18vh 40vh;
+  grid-template-rows: 8vh 16vh 16vh 16vh 34vh;
   gap: 1vh 1vw;
   grid-template-areas:
     "header header header header header"
@@ -222,14 +222,15 @@ body {
 
 #pnl-match {
   display: grid;
-  grid-template-columns: 1fr 2fr 2fr 1fr;
-  grid-template-rows: 1fr 2fr;
-  gap: 0px 0px;
+  grid-template-columns: 1.25fr 1fr 1fr 1.25fr;
+  grid-template-rows: 0.9fr 1.35fr;
+  gap: 0;
   grid-template-areas:
     "home home away away"
     ". score-h score-a .";
   grid-area: pnl-match;
   align-self: start;
+  padding: 0.8vh;
 }
 
 #pnl-field {
@@ -377,46 +378,51 @@ body {
 
 /* MATCH PANEL */
 #home, #away {
-  font-size: 2.5vh;
+  font-size: 3vh;
   font-weight: bold;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--grey7);
-  background-image: linear-gradient(180deg, var(--green1) 0%, var(--green2) 100%);
+  background-image: linear-gradient(180deg, var(--grey2) 0%, var(--grey1) 100%);
 }
 #home {
   grid-area: home;
-  border-radius: 0.75vh 0vh 0vh 0vh;
-  border-right: var(--grey3);
-  border-right-style: solid;
+  border-radius: 0.75vh 0 0 0;
+  border-right: 0.15vh solid var(--grey3);
 }
 #away {
   grid-area: away;
-  border-radius: 0vh 0.75vh 0vh 0vh;
-  border-left: var(--grey3);
-  border-left-style: solid;
+  border-radius: 0 0.75vh 0 0;
+  border-left: 0.15vh solid var(--grey3);
 }
-#goal-h, #goal-a { display:none !important; }
+#goal-h, #goal-a {
+  display:none !important;
+  visibility:hidden !important;
+  width:0 !important;
+  height:0 !important;
+  overflow:hidden !important;
+}
 #score-h, #score-a {
   font-size: 6vh;
   font-weight: bold;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 0vh;
+  border-radius: 0;
   background-image: linear-gradient(180deg, var(--orange) 0%, var(--yellow2) 100%);
   z-index: 2;
+  min-height: 7.5vh;
 }
 #score-h {
   grid-area: score-h;
-  border-right: var(--grey3);
-  border-right-style: solid;
+  border-right: 0.15vh solid var(--grey3);
+  border-radius: 0.4vh 0 0 0.4vh;
 }
 #score-a {
   grid-area: score-a;
-  border-left: var(--grey3);
-  border-left-style: solid;
+  border-left: 0.15vh solid var(--grey3);
+  border-radius: 0 0.4vh 0.4vh 0;
 }
 
 /* TEAM PANEL */
