@@ -90,10 +90,11 @@ body {
   border-radius: 5%;
   background-color: var(--grey2);
   width: 100%;
-  height: 24vh;
-  min-height: 24vh;
-  aspect-ratio: auto;
+  height: 24vh !important;
+  min-height: 24vh !important;
+  aspect-ratio: auto !important;
   outline: none;
+  overflow: hidden;
 }
 .active {
   box-shadow:
@@ -238,7 +239,7 @@ body {
 #pnl-field {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  grid-auto-rows: auto;
+  grid-auto-rows: 24vh;
   gap: 0.45vh 0.45vh;
   align-content: start;
   grid-template-areas:
