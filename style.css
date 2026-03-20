@@ -31,7 +31,9 @@ body {
   font-family: Helvetica;
 }
 
-.disabled { opacity: 0.25; }
+.disabled {
+  opacity: 0.25;
+}
 
 #app-container {
   display: flex;
@@ -62,7 +64,9 @@ body {
   gap: 1vw;
 }
 
-.head-input { display: none; }
+.head-input {
+  display: none;
+}
 
 .load-file {
   display: flex;
@@ -111,6 +115,7 @@ body {
   border-radius: 5%;
   background-color: transparent;
 }
+
 .jersey-no {
   position: absolute;
   top: -9%;
@@ -123,6 +128,7 @@ body {
   padding: 2%;
   color:aqua;
 }
+
 .jersey-name {
   position: absolute;
   top: 0%;
@@ -135,6 +141,7 @@ body {
   padding: 2%;
   color: var(--grey6);
 }
+
 .jersey-rot {
   position: absolute;
   top: 0%;
@@ -148,6 +155,7 @@ body {
   background-image: linear-gradient(180deg, var(--yellow1), var(--yellow2));
   border-radius: 20%;
 }
+
 .jersey-time {
   position: absolute;
   top: 10%;
@@ -160,7 +168,11 @@ body {
   text-align: center;
   color: var(--slate1);
 }
-.jersey-wr { display: none; }
+
+.jersey-wr {
+  display: none;
+}
+
 .jersey-tp {
   position: absolute;
   top: 70%;
@@ -177,6 +189,7 @@ body {
   border-right-style: solid;
   border-width: 2px;
 }
+
 .jersey-tr {
   position: absolute;
   top: 70%;
@@ -210,26 +223,25 @@ body {
 #pnl-time {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 0.5fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 0.5fr 1fr 1fr;
   grid-template-areas:
+    "kick-off pause break"
+    "kick-off pause break"
     "lbl-clock-main lbl-clock-main lbl-period"
     "clock-main clock-main period"
-    "kick-off pause break";
+    "clock-main clock-main period";
   grid-area: pnl-time;
 }
 
-#pnl-stop, #pnl-metrics { display:none !important; }
-
 #pnl-match {
   display: grid;
-  grid-template-columns: 1fr 2fr 2fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
   grid-template-rows: 1fr 2fr;
   gap: 0px 0px;
   grid-template-areas:
     "home home away away"
-    ". score-h score-a .";
+    "goal-h score-h score-a goal-a";
   grid-area: pnl-match;
-  align-self: start;
 }
 
 #pnl-field {
@@ -247,7 +259,7 @@ body {
 
 /* INPUTS */
 .button-1 {
-  font-size: 1.8vh;
+  font-size: 1.5vh;
   font-weight: bolder;
   font-family: Helvetica;
   border-radius: 0.75vh;
@@ -255,10 +267,6 @@ body {
   width: 100%;
   color: var(--grey6);
   transition: 0.4s linear all;
-}
-#pnl-time .button-1 {
-  height: 6vh !important;
-  font-size: 2vh !important;
 }
 .button-1.normal {
   background-image: linear-gradient(180deg, var(--grey3) 0%, var(--grey2) 100%);
@@ -376,47 +384,56 @@ body {
 }
 
 /* MATCH PANEL */
-#home, #away {
-  font-size: 2.5vh;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--grey7);
-  background-image: linear-gradient(180deg, var(--green1) 0%, var(--green2) 100%);
-}
 #home {
   grid-area: home;
+  font-size: 1.5vh;
+  font-weight: bold;
   border-radius: 0.75vh 0vh 0vh 0vh;
+  background-image: linear-gradient(180deg, var(--grey0) 0%, var(--grey2) 100%);
   border-right: var(--grey3);
   border-right-style: solid;
 }
+
 #away {
   grid-area: away;
+  font-size: 1.5vh;
+  font-weight: bold;
   border-radius: 0vh 0.75vh 0vh 0vh;
+  background-image: linear-gradient(180deg, var(--grey0) 0%, var(--grey2) 100%);
   border-left: var(--grey3);
   border-left-style: solid;
 }
-#goal-h, #goal-a { display:none !important; }
-#score-h, #score-a {
-  font-size: 6vh;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+
+#goal-h {
+  grid-area: goal-h;
+  font-size: 2vh;
+  font-weight: normal;
+  border-radius: 0vh 0vh 0vh 0.75vh;
+}
+
+#goal-a {
+  grid-area: goal-a;
+  font-size: 2vh;
+  font-weight: normal;
+  border-radius: 0vh 0vh 0.75vh 0vh;
+}
+
+#score-h {
+  grid-area: score-h;
   border-radius: 0vh;
+  border-right: var(--grey3);
+  border-right-style: solid;
   background-image: linear-gradient(180deg, var(--orange) 0%, var(--yellow2) 100%);
   z-index: 2;
 }
-#score-h {
-  grid-area: score-h;
-  border-right: var(--grey3);
-  border-right-style: solid;
-}
+
 #score-a {
   grid-area: score-a;
+  border-radius: 0vh;
   border-left: var(--grey3);
   border-left-style: solid;
+  background-image: linear-gradient(180deg, var(--orange) 0%, var(--yellow2) 100%);
+  z-index: 2;
 }
 
 /* TEAM PANEL */
