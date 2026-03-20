@@ -219,8 +219,6 @@ body {
     "clock-main clock-main period"
     "kick-off pause break";
   grid-area: pnl-time;
-
-  row-gap: 2vh;
 }
 
 #pnl-stop, #pnl-metrics { display:none !important; }
