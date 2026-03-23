@@ -82,6 +82,7 @@
         <button class="button-1 normal" id="goal-a">Away<br />Goal</button>
         <p class="txt-1" id="score-h">0</p>
         <p class="txt-1" id="score-a">0</p>
+        <button class="button-1 break button-end-game" id="end-game-btn">TERMINAR JOGO</button>
       </div>
       <div class="panel" id="pnl-field">
         <div class="player active" id="play1">
@@ -289,6 +290,18 @@
       </div>
     </div>
   </div>
+
+  <div id="end-popup" class="popup-overlay hidden">
+    <div class="popup-card">
+      <div class="popup-title">Tens a certeza?</div>
+      <div class="popup-text">Ao terminar o jogo, a app fica bloqueada e a exportação começa logo.</div>
+      <div class="popup-actions">
+        <button class="button-1 break popup-btn" id="confirm-end">SIM</button>
+        <button class="button-1 break popup-btn" id="cancel-end">NÃO</button>
+      </div>
+    </div>
+  </div>
+
 </body>
 <script src="main.js"></script>
 </html>

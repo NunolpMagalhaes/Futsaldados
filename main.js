@@ -30,11 +30,13 @@ txtHScore.style.cursor = "pointer";
 txtAScore.style.cursor = "pointer";
 
 txtHScore.addEventListener("click", function () {
+    if (appEnded) return;
     struct_match["score"][0]++;
     txtHScore.innerHTML = struct_match["score"][0];
 });
 
 txtAScore.addEventListener("click", function () {
+    if (appEnded) return;
     struct_match["score"][1]++;
     txtAScore.innerHTML = struct_match["score"][1];
 });
@@ -56,6 +58,11 @@ var btnP15 = document.getElementById("btn15");
 var btnP16 = document.getElementById("btn16");
 var btnGH = document.getElementById("goal-h");
 var btnGA = document.getElementById("goal-a");
+var btnEndGame = document.getElementById("end-game-btn");
+var endPopup = document.getElementById("end-popup");
+var btnConfirmEnd = document.getElementById("confirm-end");
+var btnCancelEnd = document.getElementById("cancel-end");
+var appEnded = false;
 //Metrics
 var btnM1Lbl = document.getElementById("m1-lbl");
 var btnM2Lbl = document.getElementById("m2-lbl");
@@ -1471,6 +1478,7 @@ window.onload = function() {
     buttonEnable(btnExport, false);
     initStatsPanel();
     bindStatsPanelEvents();
+    initEndGameControls();
     updateAnlUITable();
     updateLiveVis();
 }
@@ -1552,4 +1560,72 @@ function getAllIndexes(arr, val) {
         if (arr[i] == val)
             indexes.push(i);
     return indexes;
+}
+
+
+function initEndGameControls() {
+    if (btnEndGame) {
+        btnEndGame.addEventListener("click", function() {
+            if (appEnded) return;
+            showEndGamePopup();
+        });
+    }
+    if (btnCancelEnd) {
+        btnCancelEnd.addEventListener("click", function() {
+            hideEndGamePopup();
+        });
+    }
+    if (btnConfirmEnd) {
+        btnConfirmEnd.addEventListener("click", function() {
+            confirmEndGame();
+        });
+    }
+}
+
+function showEndGamePopup() {
+    if (!endPopup || appEnded) return;
+    endPopup.classList.remove("hidden");
+}
+
+function hideEndGamePopup() {
+    if (!endPopup) return;
+    endPopup.classList.add("hidden");
+}
+
+function confirmEndGame() {
+    if (appEnded) return;
+    appEnded = true;
+    hideEndGamePopup();
+
+    clearInterval(IntervalM);
+    clearInterval(IntervalP);
+
+    struct_time["kickofftgl"] = 0;
+    struct_time["pausetgl"] = 0;
+    struct_time["stoptgl"] = 0;
+
+    buttonEnable(clockKickOff, false);
+    buttonEnable(clockBreak, false);
+    buttonEnable(clockPause, false);
+    buttonEnable(clockStop, false);
+    buttonEnable(btnSave, false);
+    buttonEnable(btnLoadTeam, false);
+    buttonEnable(btnLoadMatch, false);
+    toggleMatch(false);
+    toggleMetrics(false);
+    togglePlayers(false);
+
+    if (btnEndGame) {
+        btnEndGame.disabled = true;
+        btnEndGame.classList.add("disabled");
+    }
+
+    var appContainer = document.getElementById("app-container");
+    if (appContainer) {
+        appContainer.classList.add("app-locked");
+    }
+
+    if (typeof btnExport !== "undefined" && btnExport && typeof btnExport.onclick === "function") {
+        btnExport.onclick();
+    }
 }
