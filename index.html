@@ -245,10 +245,46 @@
           <button class="jersey botr" id="btn16"></button>
         </div>
       </div>
-      <div class="panel" id="pnl-analysis" style="height:fit-content; overflow-y:auto;">
-        <table class="tbl-data" id="tbl-anl">
-          <tr>
-          </tr>
+      <div class="panel" id="pnl-analysis">
+        <table id="tbl-stats">
+          <colgroup>
+            <col class="col-player-name">
+            <col class="col-player-min">
+            <col class="col-small"><col class="col-small"><col class="col-small"><col class="col-small">
+            <col class="col-rem-wide"><col class="col-rem-wide">
+            <col class="col-rem-wide"><col class="col-rem-wide">
+            <col class="col-zone"><col class="col-zone"><col class="col-zone"><col class="col-zone">
+            <col class="col-zone"><col class="col-zone"><col class="col-zone"><col class="col-zone">
+          </colgroup>
+          <thead>
+            <tr>
+              <th rowspan="2">Jogadora</th>
+              <th rowspan="2">Min. Jogo</th>
+              <th rowspan="2">G</th>
+              <th rowspan="2">A</th>
+              <th rowspan="2">PGM</th>
+              <th rowspan="2">PGS</th>
+              <th colspan="2" class="hdr-remf">Remates Feitos</th>
+              <th colspan="2" class="hdr-rems">Remates Sofridos</th>
+              <th colspan="4" class="hdr-pass">Passes negativos</th>
+              <th colspan="4" class="hdr-rob">Roubos de bola</th>
+            </tr>
+            <tr>
+              <th class="sub-rem">Remates</th>
+              <th class="sub-re">R.E</th>
+              <th class="sub-rems">Remates</th>
+              <th class="sub-res">R.E.S</th>
+              <th class="zone-z1">Z1</th>
+              <th class="zone-z2">Z2</th>
+              <th class="zone-z3">Z3</th>
+              <th class="zone-z4">Z4</th>
+              <th class="zone-z1">Z1</th>
+              <th class="zone-z2">Z2</th>
+              <th class="zone-z3">Z3</th>
+              <th class="zone-z4">Z4</th>
+            </tr>
+          </thead>
+          <tbody id="stats-body"></tbody>
         </table>
       </div>
     </div>

@@ -477,25 +477,289 @@ body {
 #competition-title {
   margin-top: 1vh;
 }
-/* --- ALERTA TEMPO JOGADORA --- */
-.blink {
-  animation: blinkAnim 1s infinite;
+
+/* === PLAYER STATS PANEL === */
+#pnl-analysis {
+  grid-area: pnl-analysis;
+  padding: 0.35vh;
+  overflow: hidden;
 }
 
-@keyframes blinkAnim {
-  0% { opacity: 1; }
-  50% { opacity: 0.3; }
-  100% { opacity: 1; }
+#tbl-anl { display: none !important; }
+
+#tbl-stats {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  color: var(--grey6);
+  font-family: Helvetica;
+  font-size: 1.45vh;
 }
 
-.danger {
-  animation: blinkRed 0.5s infinite;
-  background-color: #ff4d4d !important;
-  color: white !important;
+#tbl-stats th,
+#tbl-stats td {
+  border: 1px solid rgba(255,255,255,0.16);
+  text-align: center;
+  padding: 0.38vh 0.2vw;
+  height: 2.75vh;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
-@keyframes blinkRed {
-  0% { background-color: #ff4d4d; }
-  50% { background-color: #ff0000; }
-  100% { background-color: #ff4d4d; }
+#tbl-stats thead th {
+  font-weight: 700;
+}
+
+#tbl-stats thead tr:first-child th {
+  background-image: linear-gradient(180deg, #2f3640 0%, #262d36 100%);
+}
+
+#tbl-stats tbody tr:nth-child(odd) td {
+  background-color: rgba(255,255,255,0.06);
+}
+
+#tbl-stats tbody tr:nth-child(even) td {
+  background-color: rgba(255,255,255,0.11);
+}
+
+#tbl-stats .cell-name {
+  text-align: left;
+  font-weight: 700;
+}
+
+#tbl-stats .cell-min {
+  background-color: rgba(55, 110, 150, 0.55) !important;
+  color: #5fe4ff;
+  font-weight: 700;
+}
+
+#tbl-stats .stat-btn {
+  cursor: pointer;
+  user-select: none;
+  font-weight: 700;
+}
+
+#tbl-stats .hdr-remf { background: linear-gradient(180deg, #2d6eea 0%, #1d4ed8 100%) !important; }
+#tbl-stats .sub-rem { background-color: #2d6eea !important; }
+#tbl-stats .sub-re { background-color: #8fb4e5 !important; color: #0f172a; }
+
+#tbl-stats .hdr-rems { background: linear-gradient(180deg, #ff9b00 0%, #ea580c 100%) !important; }
+#tbl-stats .sub-rems { background-color: #ea8a17 !important; }
+#tbl-stats .sub-res { background-color: #e9c79b !important; color: #111827; }
+
+#tbl-stats .hdr-pass,
+#tbl-stats .hdr-rob { background: linear-gradient(180deg, #ef4444 0%, #dc2626 100%) !important; }
+
+#tbl-stats .zone-z1, #tbl-stats .cell-z1 { background-color: #d95454 !important; color: white; }
+#tbl-stats .zone-z2, #tbl-stats .cell-z2 { background-color: #bf4b4b !important; color: white; }
+#tbl-stats .zone-z3, #tbl-stats .cell-z3 { background-color: #d7cf35 !important; color: #111827; }
+#tbl-stats .zone-z4, #tbl-stats .cell-z4 { background-color: #6f9b3a !important; color: white; }
+
+#tbl-stats .cell-rem { background-color: rgba(45, 110, 234, 0.40) !important; }
+#tbl-stats .cell-re { background-color: rgba(143, 180, 229, 0.55) !important; color: #f8fafc; }
+#tbl-stats .cell-rems { background-color: rgba(234, 138, 23, 0.55) !important; }
+#tbl-stats .cell-res { background-color: rgba(233, 199, 155, 0.55) !important; color: #111827; }
+
+.col-player-name { width: 15%; }
+.col-player-min { width: 10.5%; }
+.col-small { width: 5%; }
+.col-rem-wide { width: 3.8%; }
+.col-zone { width: 2.75%; }
+
+
+/* === FINAL RETOUCHES: narrower first columns, centered names === */
+#tbl-stats {
+  table-layout: fixed !important;
+  width: 100% !important;
+}
+
+#tbl-stats .cell-name,
+#tbl-stats th[rowspan="2"]:first-child {
+  text-align: center !important;
+}
+
+.col-player-name { width: 10.5% !important; }
+.col-player-min  { width: 5.5% !important; }
+.col-small       { width: 3.6% !important; }
+.col-rem-wide    { width: 5.8% !important; }
+.col-zone        { width: 3.35% !important; }
+
+#tbl-stats th,
+#tbl-stats td {
+  padding: 0.42vh 0.16vw !important;
+  height: 3.0vh !important;
+}
+
+#tbl-stats .cell-name { font-weight: 700; }
+#tbl-stats .cell-min  { font-size: 1.32vh !important; }
+
+
+
+/* --- stronger active/bank visual difference for all 16 players --- */
+.player {
+  background-color: var(--grey2) !important;
+  transition: background-color 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+}
+
+.player.active {
+  background-color: #14181f !important;
+  box-shadow:
+    inset -0.95vh 0 0 var(--yellow1),
+    inset 0 -0.95vh 0 var(--yellow1),
+    inset 0.95vh 0 0 var(--yellow1),
+    inset 0 0.95vh 0 var(--yellow1) !important;
+  opacity: 1 !important;
+}
+
+.player.selected {
+  opacity: 0.65;
+}
+
+.player.active.selected {
+  opacity: 1 !important;
+}
+
+
+/* === FINAL FIX: bench lighter, active darker === */
+.player {
+  background-color: #4a525a !important; /* banco */
+  transition: background-color 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+  opacity: 1 !important;
+}
+
+.player.active {
+  background-color: #14181f !important; /* em jogo */
+  box-shadow:
+    inset -0.95vh 0 0 var(--yellow1),
+    inset 0 -0.95vh 0 var(--yellow1),
+    inset 0.95vh 0 0 var(--yellow1),
+    inset 0 0.95vh 0 var(--yellow1) !important;
+  opacity: 1 !important;
+}
+
+.player.selected {
+  opacity: 0.65 !important;
+}
+
+.player.active.selected {
+  background-color: #14181f !important;
+  opacity: 1 !important;
+}
+
+
+/* visual final reforçado */
+.player { transition: background-color 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease; }
+
+
+/* SUB FIX ORDER */
+.player { background-color:#4a525a !important; }
+.player.active { background-color:#14181f !important; }
+
+/* ALERTA 3 MIN / 4 MIN */
+.player.warn3 {
+  animation: blinkWarn3 1s infinite;
+}
+
+.player.warn4 {
+  animation: blinkWarn4 0.6s infinite;
+}
+
+@keyframes blinkWarn3 {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+@keyframes blinkWarn4 {
+  0%, 100% {
+    background-color: #14181f !important;
+    box-shadow:
+      inset -0.95vh 0 0 #ef4444,
+      inset 0 -0.95vh 0 #ef4444,
+      inset 0.95vh 0 0 #ef4444,
+      inset 0 0.95vh 0 #ef4444 !important;
+    opacity: 1;
+  }
+  50% {
+    background-color: #7f1d1d !important;
+    box-shadow:
+      inset -0.95vh 0 0 #f87171,
+      inset 0 -0.95vh 0 #f87171,
+      inset 0.95vh 0 0 #f87171,
+      inset 0 0.95vh 0 #f87171 !important;
+    opacity: 0.75;
+  }
+}
+
+
+/* === stats panel uniform colors requested === */
+#tbl-stats thead th,
+#tbl-stats .hdr-remf,
+#tbl-stats .hdr-rems,
+#tbl-stats .hdr-pass,
+#tbl-stats .hdr-rob,
+#tbl-stats .sub-rem,
+#tbl-stats .sub-re,
+#tbl-stats .sub-rems,
+#tbl-stats .sub-res,
+#tbl-stats .zone-z1,
+#tbl-stats .zone-z2,
+#tbl-stats .zone-z3,
+#tbl-stats .zone-z4 {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+}
+
+/* Remates / R.E / Remates Sofridos / R.E.S with solid column colors */
+#tbl-stats .sub-rem,
+#tbl-stats .cell-rem {
+  background: #2d6eea !important;
+  color: #ffffff !important;
+}
+
+#tbl-stats .sub-re,
+#tbl-stats .cell-re {
+  background: #8fb4e5 !important;
+  color: #ffffff !important;
+}
+
+#tbl-stats .sub-rems,
+#tbl-stats .cell-rems {
+  background: #ea8a17 !important;
+  color: #ffffff !important;
+}
+
+#tbl-stats .sub-res,
+#tbl-stats .cell-res {
+  background: #e9c79b !important;
+  color: #ffffff !important;
+}
+
+/* Passes negativos / Roubos de bola titles in white bold */
+#tbl-stats .hdr-pass,
+#tbl-stats .hdr-rob,
+#tbl-stats .zone-z1,
+#tbl-stats .zone-z2,
+#tbl-stats .zone-z3,
+#tbl-stats .zone-z4 {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+}
+
+/* === final override: all stat values white === */
+#tbl-stats td.cell-rem,
+#tbl-stats td.cell-re,
+#tbl-stats td.cell-rems,
+#tbl-stats td.cell-res,
+#tbl-stats td.cell-z1,
+#tbl-stats td.cell-z2,
+#tbl-stats td.cell-z3,
+#tbl-stats td.cell-z4,
+#tbl-stats td.stat-btn,
+#tbl-stats td.cell-min {
+  color: #ffffff !important;
+  font-weight: 700 !important;
 }

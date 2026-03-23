@@ -87,6 +87,9 @@ var btnM3NegA = document.getElementById("m3-neg-a");
 
 //Analysis
 var tblAnl = document.getElementById("tbl-anl");
+var tblStatsBody = document.getElementById("stats-body");
+var playerStats = [];
+var statClickTimers = {};
 
 // Helper
 const arrSum = arr => arr.reduce((a,b) => a + b, 0);
@@ -603,6 +606,48 @@ function getCellColorWR(wr, rgbGBR) {
     }
     return "rgb(" + rgb[0] + "," + rgb[1] + "," + rgb[2] + ")"
 }
+
+function applyPlayerCardVisual(idx) {
+    var el = document.getElementById("play" + idx);
+    if (!el) return;
+
+    var isActive = struct_team.players[idx - 1].active == 1;
+    var isSelected = struct_team.players[idx - 1].selected == 1;
+    var tempo = struct_team.players[idx - 1].tplay || 0;
+
+    // limpar classes/estilos anteriores
+    el.classList.remove("active", "warn3", "warn4");
+
+    if (isActive) {
+        el.classList.add("active");
+        el.style.backgroundColor = "#14181f";
+        el.style.boxShadow = "inset -0.95vh 0 0 var(--yellow1), inset 0 -0.95vh 0 var(--yellow1), inset 0.95vh 0 0 var(--yellow1), inset 0 0.95vh 0 var(--yellow1)";
+        el.style.opacity = "1";
+
+        // ALERTAS DE TEMPO
+        if (tempo >= 5) {
+            el.classList.add("warn4");
+        } else if (tempo >= 10) {
+            el.classList.add("warn3");
+        }
+
+    } else {
+        el.style.backgroundColor = "#4a525a";
+        el.style.boxShadow = "none";
+        el.style.opacity = isSelected ? "0.65" : "1";
+    }
+
+    if (isSelected && isActive) {
+        el.style.opacity = "1";
+    }
+}
+
+function refreshActiveCards() {
+    for (var i = 1; i <= struct_team.players.length; i++) {
+        applyPlayerCardVisual(i);
+    }
+}
+
 function getVisColorWR(wr, rgbGBR) {
     rgb = [rgbGBR[3], rgbGBR[4], rgbGBR[5]];
     if (wr<0.9) {
@@ -618,66 +663,47 @@ function updateLiveVis() {
     colGBR = [79,191,111,24,160,251,249,92,80];
 
     perno = struct_time.period;
-    if (perno == 0) {
-        perno = 1;
+    if (perno==0) {
+        perno=1;
     }
-
-    tPlayDat = getKeyArray(struct_team.players, "tplay");
-    tRestDat = getKeyArray(struct_team.players, "trest");
-
-    for (i = 1; i <= struct_general.nplay + struct_general.nsub; i++) {
-        // rotações
+    tPlayDat = getKeyArray(struct_team.players, "tplay")
+    tRestDat = getKeyArray(struct_team.players, "trest")
+    for (i=1; i<=struct_general.nplay + struct_general.nsub; i++) {
+        // GET CLOCK COLOR
         txtRot = document.getElementById("rot" + i);
         txtRot.innerHTML = tbl_period.Rotations[perno][i-1];
 
-        // relógio principal do cartão
         txtClock = document.getElementById("time" + i);
         clockDat = struct_team.players[i-1].tplay;
-        cCol = getCellColor(tPlayDat, i-1, colG);
-
-        if (struct_team.players[i-1].active == 0) {
+        cCol = getCellColor(tPlayDat, i-1, colG)
+        if (struct_team.players[i-1].active==0) {
             clockDat = struct_team.players[i-1].trest;
-            cCol = getCellColor(tRestDat, i-1, colR);
+            cCol = getCellColor(tRestDat, i-1, colR)
         }
-
         txtClock.innerHTML = setClock(clockDat);
         txtClock.style.color = cCol;
-
-        // cartão jogadora
-       let playerCard = document.getElementById("play" + i);
+let playerCard = document.getElementById("play" + i);
 
 if (playerCard) {
-    let tempo = struct_team.players[i-1].tplay;
-
-    playerCard.classList.remove("blink", "danger");
-
+    playerCard.classList.remove("active", "blink", "danger");
     if (struct_team.players[i-1].active == 1) {
         playerCard.classList.add("active");
-
-       if (tempo >= 240) {
-    playerCard.classList.add("danger");
-} else if (tempo >= 180) {
-    playerCard.classList.add("blink");
-}
-
-    } else {
-        playerCard.classList.remove("active", "blink", "danger");
     }
 }
+        wrRatio = Math.round(100*struct_team.players[i-1].tplay / (struct_team.players[i-1].trest+1))/100;
+        if (wrRatio>=1) {
 
-        // WR
-        wrRatio = Math.round(100 * struct_team.players[i-1].tplay / (struct_team.players[i-1].trest + 1)) / 100;
-
+        }
         txtWR = document.getElementById("wr" + i);
         txtWR.innerHTML = wrRatio;
         txtWR.style.color = getVisColorWR(wrRatio, colGBR);
 
         txtTP = document.getElementById("tp" + i);
         txtTP.innerHTML = setClock(struct_team.players[i-1].tplay);
-
         txtTR = document.getElementById("tr" + i);
         txtTR.innerHTML = setClock(struct_team.players[i-1].trest);
     }
+    updateStatsPanel();
 }
 function updateWRPer(pno) {
     tplay = tbl_period["Play Time"][struct_time.period][pno];
@@ -698,6 +724,115 @@ function updateWRPer(pno) {
     tbl_period["W/R Ratio"][0][pno] = wrRatioM;
     tbl_period["% Total Time"][0][pno] = perPlayM;
 }
+
+function initStatsPanel() {
+    if (!tblStatsBody) return;
+    playerStats = [];
+    tblStatsBody.innerHTML = "";
+
+    for (var i = 1; i <= struct_team.players.length; i++) {
+        playerStats[i] = {
+            g: 0, a: 0, pgm: 0, pgs: 0,
+            rem: 0, re: 0, rems: 0, res: 0,
+            z1: 0, z2: 0, z3: 0, z4: 0,
+            rz1: 0, rz2: 0, rz3: 0, rz4: 0
+        };
+    }
+
+    renderStatsPanel();
+}
+
+function renderStatsPanel() {
+    if (!tblStatsBody) return;
+    var rows = "";
+    for (var i = 1; i <= struct_team.players.length; i++) {
+        rows += "<tr>" +
+            "<td class='cell-name' id='s-name-" + i + "'></td>" +
+            "<td class='cell-min' id='s-min-" + i + "'>00:00</td>" +
+            buildStatCell(i, 'g') +
+            buildStatCell(i, 'a') +
+            buildStatCell(i, 'pgm') +
+            buildStatCell(i, 'pgs') +
+            buildStatCell(i, 'rem', 'cell-rem') +
+            buildStatCell(i, 're', 'cell-re') +
+            buildStatCell(i, 'rems', 'cell-rems') +
+            buildStatCell(i, 'res', 'cell-res') +
+            buildStatCell(i, 'z1', 'cell-z1') +
+            buildStatCell(i, 'z2', 'cell-z2') +
+            buildStatCell(i, 'z3', 'cell-z3') +
+            buildStatCell(i, 'z4', 'cell-z4') +
+            buildStatCell(i, 'rz1', 'cell-z1') +
+            buildStatCell(i, 'rz2', 'cell-z2') +
+            buildStatCell(i, 'rz3', 'cell-z3') +
+            buildStatCell(i, 'rz4', 'cell-z4') +
+            "</tr>";
+    }
+    tblStatsBody.innerHTML = rows;
+    updateStatsPanel();
+}
+
+function buildStatCell(rowNo, key, extraClass) {
+    var cls = "stat-btn";
+    if (extraClass) cls += " " + extraClass;
+    return "<td class='" + cls + "' data-row='" + rowNo + "' data-key='" + key + "' id='stat-" + key + "-" + rowNo + "'>0</td>";
+}
+
+function bindStatsPanelEvents() {
+    if (!tblStatsBody) return;
+
+    tblStatsBody.addEventListener('click', function(e) {
+        var cell = e.target.closest('.stat-btn');
+        if (!cell) return;
+        var rowNo = cell.dataset.row;
+        var key = cell.dataset.key;
+        var timerKey = rowNo + '-' + key;
+
+        clearTimeout(statClickTimers[timerKey]);
+        statClickTimers[timerKey] = setTimeout(function() {
+            changePlayerStat(parseInt(rowNo), key, 1);
+        }, 220);
+    });
+
+    tblStatsBody.addEventListener('dblclick', function(e) {
+        var cell = e.target.closest('.stat-btn');
+        if (!cell) return;
+        e.preventDefault();
+        var rowNo = cell.dataset.row;
+        var key = cell.dataset.key;
+        var timerKey = rowNo + '-' + key;
+
+        clearTimeout(statClickTimers[timerKey]);
+        changePlayerStat(parseInt(rowNo), key, -1);
+    });
+}
+
+function changePlayerStat(rowNo, key, delta) {
+    if (!playerStats[rowNo]) return;
+    playerStats[rowNo][key] = Math.max(0, (playerStats[rowNo][key] || 0) + delta);
+    var cell = document.getElementById('stat-' + key + '-' + rowNo);
+    if (cell) cell.innerHTML = playerStats[rowNo][key];
+}
+
+function updateStatsPanel() {
+    if (!tblStatsBody) return;
+    for (var i = 1; i <= struct_team.players.length; i++) {
+        var nameEl = document.getElementById('s-name-' + i);
+        if (nameEl) {
+            nameEl.innerHTML = struct_team.players[i-1].nlast || ('Player ' + i);
+        }
+        var minEl = document.getElementById('s-min-' + i);
+        if (minEl) {
+            minEl.innerHTML = setClock(struct_team.players[i-1].totplay || 0);
+        }
+        if (playerStats[i]) {
+            Object.keys(playerStats[i]).forEach(function(key) {
+                var cell = document.getElementById('stat-' + key + '-' + i);
+                if (cell) cell.innerHTML = playerStats[i][key];
+            });
+        }
+    }
+}
+
 //#endregion
 
 //#region Team Actions+Passing
@@ -710,6 +845,7 @@ function setSelected(i) {
         struct_team["players"][i-1]["selected"] = 0;
         el.classList.remove('selected');
     }
+    applyPlayerCardVisual(i);
 }
 function checkSub() {
     var selArray = getKeyArray(struct_team["players"], "selected");
@@ -717,46 +853,44 @@ function checkSub() {
         switchPlayers(selArray);
     }
 }
+
+
 function switchPlayers(selArray){
     var pID1 = getAllIndexes(selArray, 1)[0];
     var pID2 = getAllIndexes(selArray, 1)[1];
 
-    // Determine on and off
     var onID = pID1;
     var offID = pID2;
     var validSub = false;
-    if (struct_team.players[pID1].active==0 && struct_team.players[pID2].active==1) {
+
+    if (struct_team.players[pID1].active == 0 && struct_team.players[pID2].active == 1) {
         onID = pID1;
         offID = pID2;
         validSub = true;
-    } else if (struct_team.players[pID1].active==1 && struct_team.players[pID2].active==0) {
+    } else if (struct_team.players[pID1].active == 1 && struct_team.players[pID2].active == 0) {
         onID = pID2;
         offID = pID1;
         validSub = true;
     }
-    el1 = document.getElementById("play" + (onID+1));
-    el2 = document.getElementById("play" + (offID+1));
 
     if (validSub) {
-        struct_team["players"][offID]["active"] = 0;
-        struct_team["players"][onID]["active"] = 1;
+        struct_team.players[offID].active = 0;
+        struct_team.players[onID].active = 1;
 
-        // Update Analysis Table
-        perno = struct_time["period"];
-     if (struct_time.kickofftgl==1) {
-    tbl_period.Rotations[perno][offID] = 0;
-    tbl_period.Rotations[perno][onID] = 1;
-    tbl_period.Rotations[0][onID] += 1;
-}
-tbl_period.Rotations[perno][offID] = 0;
-tbl_period.Rotations[perno][onID] = 1;
-        // Update Live Vis
         struct_team.players[onID].tplay = 0;
         struct_team.players[offID].trest = 0;
-        updateLiveVis();
 
-        // Update Match Table
-        if (struct_time.kickofftgl==1) {
+        var perno = struct_time["period"];
+        if (struct_time.kickofftgl == 1) {
+            tbl_period.Rotations[perno][offID] = 0;
+            tbl_period.Rotations[perno][onID] = 1;
+            tbl_period.Rotations[0][onID] += 1;
+        } else {
+            tbl_period.Rotations[perno][offID] = 0;
+            tbl_period.Rotations[perno][onID] = 1;
+        }
+
+        if (struct_time.kickofftgl == 1) {
             updateTime();
             var timeMain = parseClock(struct_time["clock_main"],0);
             var timePlay = parseClock(struct_time["clock_play"],0);
@@ -772,16 +906,33 @@ tbl_period.Rotations[perno][onID] = 1;
             tbl_match["player_no2"].push(struct_team["players"][onID]["pno"]);
             tbl_match["last_name2"].push(struct_team["players"][onID]["nlast"]);
         }
-        // Aesthetics
-        el1.classList.add('active');
-        el2.classList.remove('active');
-        //checkSub();
-        updateAnlUITable();
     }
-    struct_team.players[onID].selected = 0;
-    struct_team.players[offID].selected = 0;
-    el1.classList.remove('selected');
-    el2.classList.remove('selected');
+
+    // limpar seleção lógica PRIMEIRO
+    struct_team.players[pID1].selected = 0;
+    struct_team.players[pID2].selected = 0;
+
+    // limpar classes/estilos e reaplicar visual correto às 16
+    for (var i = 1; i <= struct_team.players.length; i++) {
+        var el = document.getElementById("play" + i);
+        if (!el) continue;
+
+        el.classList.remove("selected", "blink", "danger", "active");
+        el.style.opacity = "1";
+
+        if (struct_team.players[i-1].active == 1) {
+            el.classList.add("active");
+            el.style.backgroundColor = "#14181f";
+            el.style.boxShadow = "inset -0.95vh 0 0 var(--yellow1), inset 0 -0.95vh 0 var(--yellow1), inset 0.95vh 0 0 var(--yellow1), inset 0 0.95vh 0 var(--yellow1)";
+        } else {
+            el.style.backgroundColor = "#4a525a";
+            el.style.boxShadow = "none";
+        }
+    }
+
+    updateLiveVis();
+    if (typeof updateAnlUITable === "function") updateAnlUITable();
+    if (typeof updateStatsPanel === "function") updateStatsPanel();
 }
 
 btnP1.onclick = function(){setSelected(1); checkSub()}
@@ -910,6 +1061,25 @@ btnM3NegA.onclick = function() {
     metricChange(2,1,-1,btnM3ValA,btnM3Lbl);
 }
 
+
+function normalizeExcelKey(val) {
+    return String(val || "")
+        .normalize("NFD")
+        .replace(/[̀-ͯ]/g, "")
+        .trim()
+        .toLowerCase();
+}
+
+function getCfgValue(cfg, keys, fallback) {
+    for (var i = 0; i < keys.length; i++) {
+        var key = normalizeExcelKey(keys[i]);
+        if (cfg[key] !== undefined && cfg[key] !== null && cfg[key] !== "") {
+            return cfg[key];
+        }
+    }
+    return fallback;
+}
+
 //#endregion
 
 //#region Load Team
@@ -921,60 +1091,137 @@ function loadTeamInfo() {
     var file = files[0];
 
     var reader = new FileReader();
-    reader.onloadend = function(event) {
+    reader.onloadend = function() {
       var arrayBuffer = reader.result;
+      var workbook = XLSX.read(arrayBuffer, { type: 'array' });
 
-      var options = { type: 'array' };
-      var workbook = XLSX.read(arrayBuffer, options);
+      var infoSheet = workbook.Sheets["info"] || workbook.Sheets["Info"] || workbook.Sheets["config"] || workbook.Sheets["Config"];
+      var playersSheet = workbook.Sheets["jogadoras"] || workbook.Sheets["Jogadoras"];
 
-      var sheetName = workbook.SheetNames[0]
-      var sheet = workbook.Sheets[sheetName]
-
-      var matchInfo = {};
-      for (var i=1; i<11; i++) {
-        matchInfo[sheet["A"+i]["v"]] = sheet["B"+i]["v"];
+      if (!infoSheet) {
+        alert("Não encontrei a folha 'info'.");
+        return;
       }
-      var playerInfo = {
-        "pid": [],
-        "pno": [],
-        "nfirst": [],
-        "nlast": [],
-        "position": []
+      if (!playersSheet) {
+        alert("Não encontrei a folha 'jogadoras'.");
+        return;
+      }
+
+      var infoRows = XLSX.utils.sheet_to_json(infoSheet, { header: 1, blankrows: false });
+      var cfg = {};
+      for (var i = 0; i < infoRows.length; i++) {
+        var row = infoRows[i] || [];
+        if (row.length < 2) continue;
+        var key = normalizeExcelKey(row[0]);
+        if (!key) continue;
+        cfg[key] = row[1];
+      }
+
+      var homeTeam = getCfgValue(cfg, ["home team", "equipa casa", "equipa da casa"], "");
+      var awayTeam = getCfgValue(cfg, ["away team", "equipa de fora", "equipa fora"], "");
+      var competition = getCfgValue(cfg, ["competition", "competição", "competicao"], "");
+      var stage = getCfgValue(cfg, ["stage", "jornada"], "");
+      var location = getCfgValue(cfg, ["location", "local"], "");
+      var matchDate = getCfgValue(cfg, ["match date", "data", "data jogo"], "");
+      var kickOff = getCfgValue(cfg, ["kick off time", "kickoff", "hora", "hora jogo"], "");
+      var teamAnalyzed = getCfgValue(cfg, ["team analyzed", "equipa analisada"], awayTeam || homeTeam);
+      var homeDisplay = getCfgValue(cfg, ["home display", "display casa", "display equipa casa"], homeTeam);
+      var awayDisplay = getCfgValue(cfg, ["away display", "display fora", "display equipa fora"], awayTeam);
+
+      var matchInfo = {
+        "Home Team": homeTeam,
+        "Home Display": homeDisplay,
+        "Away Team": awayTeam,
+        "Away Display": awayDisplay,
+        "Team Analyzed": teamAnalyzed,
+        "Match Date": matchDate,
+        "Competition": competition,
+        "Stage": stage,
+        "Location": location,
+        "Kick Off Time": kickOff
       };
-      for (var i=14; i<30; i++) {
-        playerInfo["pid"].push(sheet["A"+i]["v"]);
-        playerInfo["pno"].push(sheet["B"+i]["v"]);
-        playerInfo["nfirst"].push(sheet["C"+i]["v"]);
-        playerInfo["nlast"].push(sheet["D"+i]["v"]);
-        playerInfo["position"].push(sheet["E"+i]["v"]);
+
+      var playersRows = XLSX.utils.sheet_to_json(playersSheet, { header: 1, blankrows: false });
+      var headerIdx = -1;
+      for (var r = 0; r < playersRows.length; r++) {
+        var row2 = (playersRows[r] || []).map(normalizeExcelKey);
+        if (row2.indexOf("number") !== -1 && row2.indexOf("player number") !== -1) {
+          headerIdx = r;
+          break;
+        }
       }
+
+      if (headerIdx === -1) {
+        alert("Não encontrei os cabeçalhos da tabela na folha 'jogadoras'.");
+        return;
+      }
+
+      var headers = (playersRows[headerIdx] || []).map(normalizeExcelKey);
+      function colIndex(names) {
+        for (var c = 0; c < names.length; c++) {
+          var idx = headers.indexOf(normalizeExcelKey(names[c]));
+          if (idx !== -1) return idx;
+        }
+        return -1;
+      }
+
+      var idxPid = colIndex(["number", "id"]);
+      var idxPno = colIndex(["player number", "numero", "numero camisola"]);
+      var idxFirst = colIndex(["first name", "nome", "primeiro nome"]);
+      var idxLast = colIndex(["last name (display)", "name (display)", "last name", "apelido", "nome (display)", "nome display"]);
+      var idxPos = colIndex(["position", "posicao"]);
+
+      var playerInfo = { pid: [], pno: [], nfirst: [], nlast: [], position: [] };
+      for (var r2 = headerIdx + 1; r2 < playersRows.length; r2++) {
+        var prow = playersRows[r2] || [];
+        if (!prow.length) continue;
+
+        var pid = idxPid >= 0 ? prow[idxPid] : "";
+        var pno = idxPno >= 0 ? prow[idxPno] : "";
+        var nfirst = idxFirst >= 0 ? prow[idxFirst] : "";
+        var nlast = idxLast >= 0 ? prow[idxLast] : "";
+        var pos = idxPos >= 0 ? prow[idxPos] : "";
+
+        if (pid === "" && pno === "" && nfirst === "" && nlast === "" && pos === "") continue;
+
+        playerInfo.pid.push(pid);
+        playerInfo.pno.push(pno);
+        playerInfo.nfirst.push(nfirst);
+        playerInfo.nlast.push(nlast);
+        playerInfo.position.push(pos);
+
+        if (playerInfo.pid.length >= (struct_general["nplay"] + struct_general["nsub"])) break;
+      }
+
       updateTeamInfo(matchInfo, playerInfo);
       updateAnlUITable();
+      updateStatsPanel();
     };
     reader.readAsArrayBuffer(file);
 }
 function updateTeamInfo(mInfo, pInfo) {
     // Match Info
-    struct_match["date"] = mInfo["Match Date"];
-    struct_match["location"] = mInfo["Location"];
-    struct_match["competition"] = mInfo["Competition"];
-    struct_match["stage"] = mInfo["Stage"];
-    struct_match["kickoff"] = mInfo["Kick Off Time"];
-    struct_match["teams"] = [mInfo["Home Team"], mInfo["Away Team"]];
-    struct_match["initials"] = [mInfo["Home Display"], mInfo["Away Display"]];
+    struct_match["date"] = mInfo["Match Date"] || struct_match["date"];
+    struct_match["location"] = mInfo["Location"] || struct_match["location"];
+    struct_match["competition"] = mInfo["Competition"] || struct_match["competition"];
+    struct_match["stage"] = mInfo["Stage"] || struct_match["stage"];
+    struct_match["kickoff"] = mInfo["Kick Off Time"] || struct_match["kickoff"];
+    struct_match["teams"] = [mInfo["Home Team"] || struct_match["teams"][0], mInfo["Away Team"] || struct_match["teams"][1]];
+    struct_match["initials"] = [mInfo["Home Display"] || struct_match["initials"][0], mInfo["Away Display"] || struct_match["initials"][1]];
 
     // Team Info
-    struct_team["name"] = mInfo["Team Analyzed"];
-    if (mInfo["Home Team"]==mInfo["Team Analyzed"]) {
+    struct_team["name"] = mInfo["Team Analyzed"] || struct_team["name"];
+    if ((mInfo["Home Team"] || struct_match["teams"][0]) == struct_team["name"]) {
         struct_team["tgl_home"] = 1;
     } else {
         struct_team["tgl_home"] = 0;
     }
-    for(var i=0; i<(struct_general["nplay"] + struct_general["nsub"]); i++) {
-        struct_team["players"][i]["pno"] = pInfo["pno"][i];
-        struct_team["players"][i]["nfirst"] = pInfo["nfirst"][i];
-        struct_team["players"][i]["nlast"] = pInfo["nlast"][i];
-        struct_team["players"][i]["position"] = pInfo["position"][i];
+    for (var i = 0; i < (struct_general["nplay"] + struct_general["nsub"]); i++) {
+        struct_team["players"][i]["pid"] = pInfo["pid"][i] !== undefined ? pInfo["pid"][i] : struct_team["players"][i]["pid"];
+        struct_team["players"][i]["pno"] = pInfo["pno"][i] !== undefined ? pInfo["pno"][i] : struct_team["players"][i]["pno"];
+        struct_team["players"][i]["nfirst"] = pInfo["nfirst"][i] !== undefined ? pInfo["nfirst"][i] : struct_team["players"][i]["nfirst"];
+        struct_team["players"][i]["nlast"] = pInfo["nlast"][i] !== undefined ? pInfo["nlast"][i] : struct_team["players"][i]["nlast"];
+        struct_team["players"][i]["position"] = pInfo["position"][i] !== undefined ? pInfo["position"][i] : struct_team["players"][i]["position"];
     }
 
     // Update Team UI Labels
@@ -986,14 +1233,21 @@ function updateTeamInfo(mInfo, pInfo) {
     btnM3A.innerHTML = struct_match.initials[1];
     txtHome.innerHTML = struct_match.initials[0];
     txtAway.innerHTML = struct_match.initials[1];
-    txtHome.style.fontSize = "2vh"
-    txtAway.style.fontSize = "2vh"
+    txtHome.style.fontSize = "2vh";
+    txtAway.style.fontSize = "2vh";
     btnGH.innerHTML = struct_match.initials[0] + "\n Goal";
     btnGA.innerHTML = struct_match.initials[1] + "\n Goal";
+
+    var compTitle = document.getElementById("competition-title");
+    if (compTitle) compTitle.innerHTML = struct_match["competition"] || "COMPETIÇÃO";
 
     // Update Player UI Labels
     updateLiveButtons();
 }
+
+//#endregion
+
+//#region Load Match
 //#endregion
 
 //#region Load Match
@@ -1012,6 +1266,7 @@ btnLoadMatch.onchange = function() {
             tbl_match = match_data["tbl_match"];
             tbl_period = match_data["tbl_period"];
             tbl_metrics = match_data["tbl_metrics"];
+            playerStats = match_data["player_stats"] || [];
 
             // UPDATE MINUTES + SECONDS        
             var timeMain = parseClock(struct_time["clock_main"],0);
@@ -1022,6 +1277,7 @@ btnLoadMatch.onchange = function() {
             secondsP = timePlay[1];
 
             // UPDATE INFO
+            if (!playerStats || playerStats.length===0) { initStatsPanel(); } else { renderStatsPanel(); }
             updateAnlUITable();
             updateLiveVis();
             updateLiveButtons();
@@ -1046,6 +1302,10 @@ btnLoadMatch.onchange = function() {
             btnM2ValA.innerHTML = struct_general.metric_val[1][1];
             btnM3ValH.innerHTML = struct_general.metric_val[2][0];
             btnM3ValA.innerHTML = struct_general.metric_val[2][1];
+            var compTitle = document.getElementById("competition-title");
+            if (compTitle) compTitle.innerHTML = struct_match["competition"] || "COMPETIÇÃO";
+            if (match_data["player_stats"]) playerStats = match_data["player_stats"];
+            updateStatsPanel();
 
             // UPDATE ENABLES
             if (struct_time["pausetgl"]==1) {
@@ -1081,15 +1341,8 @@ function updateLiveButtons() {
         elNo = document.getElementById('no'+(i+1));
         elNo.innerHTML = struct_team.players[i].pno + '.';
     }
-    for (i=1; i<=struct_team.players.length; i++) {
-        el = document.getElementById("play" + i)
-        if (el.classList.contains('active')) {
-            el.classList.remove('active');
-        }
-        if (struct_team.players[i-1].active==1) {
-            el.classList.add('active');
-        }
-    }
+    refreshActiveCards();
+    updateStatsPanel();
 }
 //#endregion
 
@@ -1103,7 +1356,8 @@ btnSave.onclick = function() {
         "team": struct_team,
         "tbl_match": tbl_match,
         "tbl_metrics": tbl_metrics,
-        "tbl_period": tbl_period
+        "tbl_period": tbl_period,
+        "player_stats": playerStats
     }
     var blob = new Blob([JSON.stringify(struct)], {type: "text/plain;charset=utf-8"});
     var fileName = struct_match["teams"][0] + "_" + struct_match["teams"][1] + "_" + struct_match["date"] + ".txt";
@@ -1159,72 +1413,45 @@ btnExport.onclick = function() {
         ]);
     }
 
-    // Match Events Tab
-    var dataMatchEvents = [];
-    // Header
-    dataMatchEvents.push(Object.keys(tbl_match));
-    // Data
-    if (tbl_match["index"].length > 0) {
-        for (var row=0; row<tbl_match["index"].length; row++) {
-            var datarow = [];
-            for (var col=0; col<Object.keys(tbl_match).length; col++) {
-                datarow.push(tbl_match[Object.keys(tbl_match)[col]][row])
-            }
-            dataMatchEvents.push(datarow.slice());
-        }
-    }
-
-    // Metrics Tab
-    var dataMetrics = [];
-    // Header
-    dataMetrics.push(Object.keys(tbl_metrics));
-    // Data
-    if (tbl_metrics["index"].length > 0) {
-        for (var row=0; row<tbl_metrics["index"].length; row++) {
-            var datarow = [];
-            for (var col=0; col<Object.keys(tbl_metrics).length; col++) {
-                datarow.push(tbl_metrics[Object.keys(tbl_metrics)[col]][row])
-            }
-            dataMetrics.push(datarow.slice());
-        }
-    }
-
-    // Playing Stats Tab
-    var dataPlayEvents = [];
-    var metrics = Object.keys(tbl_period); // Rotations, Play Time, Rest Time, W/R
-    var perlbl = struct_general.per_lbl;
-    // Header
-    var headerrow = []
-    headerrow.push('Jersey #')
-    headerrow.push('Display Name')
-    for (p=0; p<struct_general.nper; p++) {
-        for (m=0; m<metrics.length; m++) {
-            headerrow.push(perlbl[p] + '_' + metrics[m])
-        }
-    }
-    dataPlayEvents.push(headerrow)
-    // Data
-    for (i=0; i<struct_team.players.length; i++) {
-        var datarow = [];
-        datarow.push(struct_team.players[i].pno)
-        datarow.push(struct_team.players[i].nlast)
-        for (p=0; p<struct_general.nper; p++) {
-            for (m=0; m<metrics.length; m++) {
-                if (metrics[m]=="% Total Time") {
-                    datarow.push(tbl_period[metrics[m]][p][i] + ".0")
-                } else {
-                    datarow.push(tbl_period[metrics[m]][p][i])
-                }
-            }
-        }
-        dataPlayEvents.push(datarow.slice());
+    // Live Stats Tab
+    var dataLiveStats = [];
+    dataLiveStats.push([
+        "Player ID", "Player No", "First Name", "Last Name", "Min. Jogo",
+        "G", "A", "PGM", "PGS",
+        "Remates", "R.E.", "Remates Sofridos", "R.E.S.",
+        "Passes Negativos Z1", "Passes Negativos Z2", "Passes Negativos Z3", "Passes Negativos Z4",
+        "Roubos de Bola Z1", "Roubos de Bola Z2", "Roubos de Bola Z3", "Roubos de Bola Z4"
+    ]);
+    for (var i=0; i<struct_team.players.length; i++) {
+        var stats = playerStats[i+1] || {};
+        dataLiveStats.push([
+            struct_team.players[i].pid,
+            struct_team.players[i].pno,
+            struct_team.players[i].nfirst,
+            struct_team.players[i].nlast,
+            setClock(struct_team.players[i].totplay || 0),
+            stats.g || 0,
+            stats.a || 0,
+            stats.pgm || 0,
+            stats.pgs || 0,
+            stats.rem || 0,
+            stats.re || 0,
+            stats.rems || 0,
+            stats.res || 0,
+            stats.z1 || 0,
+            stats.z2 || 0,
+            stats.z3 || 0,
+            stats.z4 || 0,
+            stats.rz1 || 0,
+            stats.rz2 || 0,
+            stats.rz3 || 0,
+            stats.rz4 || 0
+        ]);
     }
 
     wb = pushSheet(wb, "Match Info", dataMatchInfo);
     wb = pushSheet(wb, "Team Info", dataTeamInfo);
-    wb = pushSheet(wb, "Match Events", dataMatchEvents);
-    wb = pushSheet(wb, "Metrics", dataMetrics);
-    wb = pushSheet(wb, "Playing Stats", dataPlayEvents);
+    wb = pushSheet(wb, "Live Stats", dataLiveStats);
 
     // Export
     var fileName = struct_match["teams"][0] + "_" + struct_match["teams"][1] + "_" + struct_match["date"] + ".xlsx";
@@ -1242,6 +1469,8 @@ window.onload = function() {
     buttonEnable(clockStop, false);
     buttonEnable(btnSave, false);
     buttonEnable(btnExport, false);
+    initStatsPanel();
+    bindStatsPanelEvents();
     updateAnlUITable();
     updateLiveVis();
 }
