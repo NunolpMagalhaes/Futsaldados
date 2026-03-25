@@ -753,6 +753,7 @@ function renderStatsPanel() {
     if (!tblStatsBody) return;
     var rows = "";
     for (var i = 1; i <= struct_team.players.length; i++) {
+        var showSofridos = (i === 1 || i === 6);
         rows += "<tr>" +
             "<td class='cell-name' id='s-name-" + i + "'></td>" +
             "<td class='cell-min' id='s-min-" + i + "'>00:00</td>" +
@@ -762,8 +763,8 @@ function renderStatsPanel() {
             buildStatCell(i, 'pgs') +
             buildStatCell(i, 'rem', 'cell-rem') +
             buildStatCell(i, 're', 'cell-re') +
-            buildStatCell(i, 'rems', 'cell-rems') +
-            buildStatCell(i, 'res', 'cell-res') +
+            buildConditionalStatCell(i, 'rems', showSofridos, 'cell-rems') +
+            buildConditionalStatCell(i, 'res', showSofridos, 'cell-res') +
             buildStatCell(i, 'z1', 'cell-z1') +
             buildStatCell(i, 'z2', 'cell-z2') +
             buildStatCell(i, 'z3', 'cell-z3') +
@@ -782,6 +783,11 @@ function buildStatCell(rowNo, key, extraClass) {
     var cls = "stat-btn";
     if (extraClass) cls += " " + extraClass;
     return "<td class='" + cls + "' data-row='" + rowNo + "' data-key='" + key + "' id='stat-" + key + "-" + rowNo + "'>0</td>";
+}
+
+function buildConditionalStatCell(rowNo, key, showCell, extraClass) {
+    if (!showCell) return "<td></td>";
+    return buildStatCell(rowNo, key, extraClass);
 }
 
 function bindStatsPanelEvents() {
@@ -1431,6 +1437,7 @@ btnExport.onclick = function() {
     ]);
     for (var i=0; i<struct_team.players.length; i++) {
         var stats = playerStats[i+1] || {};
+        var showSofridosExport = (i + 1 === 1 || i + 1 === 6);
         dataLiveStats.push([
             struct_team.players[i].pid,
             struct_team.players[i].pno,
@@ -1443,8 +1450,8 @@ btnExport.onclick = function() {
             stats.pgs || 0,
             stats.rem || 0,
             stats.re || 0,
-            stats.rems || 0,
-            stats.res || 0,
+            showSofridosExport ? (stats.rems || 0) : "",
+            showSofridosExport ? (stats.res || 0) : "",
             stats.z1 || 0,
             stats.z2 || 0,
             stats.z3 || 0,
